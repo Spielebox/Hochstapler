@@ -71,7 +71,7 @@ export class Room {
           const name = String(m.name || '').trim().slice(0, 14);
           if (S.ph !== 'lobby') return err('Das Spiel läuft schon.');
           if (!name || S.players.some(x => x.name === name)) return err('Dieser Name ist ungültig oder schon vergeben.');
-          if (S.players.length >= 12) return err('Der Raum ist voll.');
+          if (S.players.length >= 20) return err('Der Raum ist voll.');
           p = { id: crypto.randomUUID().slice(0, 8), name, sc: 0 };
           S.players.push(p);
           if (!S.host) S.host = p.id;

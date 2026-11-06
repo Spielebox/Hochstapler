@@ -62,7 +62,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-9';
+const VERSION='6.11.-12';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -70,7 +70,7 @@ const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</spa
 /* Einrichtung */
 function set(k,v){C[k]=v;save();setup(true)}
 function chg(k,d){C[k]+=d;if(k==='max')C.maxAuto=false;C.rounds=Math.min(20,Math.max(1,C.rounds));save();setup(true)}
-function add(){const v=$('nm').value.trim();if(v&&!C.names.includes(v)&&C.names.length<12){C.names.push(v);save()}setup();const e=$('nm');if(e)e.focus()}
+function add(){const v=$('nm').value.trim();if(v&&!C.names.includes(v)&&C.names.length<20){C.names.push(v);save()}setup();const e=$('nm');if(e)e.focus()}
 function rm(i){C.names.splice(i,1);save();setup()}
 function setup(keep){
  inGame=false;
@@ -159,7 +159,7 @@ function ballot(i,keep){
  +C.names.map((x,j)=>j===i?'':`<button class="${SEL.includes(x)?'on':''}" onclick="tg(${i},${j})">${SEL.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')
  +`<button class="p" style="margin-top:14px" ${ok?'':'disabled'} onclick="G.votes[C.names[${i}]]=[...SEL];hand(${i+1},'vote')">Tipp abgeben (${SEL.length}${g?'':' von '+G.k})</button>`,keep);
 }
-function tg(i,j){const x=C.names[j],a=SEL.indexOf(x);if(a>=0)SEL.splice(a,1);else if(C.mode==='geheim'||SEL.length<G.k)SEL.push(x);ballot(i,true)}
+function tg(i,j){const x=C.names[j],a=SEL.indexOf(x);if(a>=0)SEL.splice(a,1);else if(C.mode==='geheim'||SEL.length<G.k)SEL.push(x);else if(G.k===1)SEL=[x];ballot(i,true)}
 
 /* Auswertung */
 function result1(){
@@ -239,7 +239,7 @@ function kick(id){const p=M.players.find(x=>x.id===id);if(p&&confirm(p.name+' au
 function share(){const u=location.origin+location.pathname+'?raum='+myCode;
  if(navigator.share)navigator.share({title:'Hochstapler',text:'Komm in meinen Raum '+myCode,url:u}).catch(()=>{});
  else if(navigator.clipboard)navigator.clipboard.writeText(u).then(()=>alert('Link kopiert'))}
-function tg2(id){const a=SEL.indexOf(id);if(a>=0)SEL.splice(a,1);else if(M.cfg.mode==='geheim'||SEL.length<M.k)SEL.push(id);mp(true)}
+function tg2(id){const a=SEL.indexOf(id);if(a>=0)SEL.splice(a,1);else if(M.cfg.mode==='geheim'||SEL.length<M.k)SEL.push(id);else if(M.k===1)SEL=[id];mp(true)}
 const cseg=(o,cur,k)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="mx('cfg',{k:'${k}',v:'${v}'})">${l}</button>`).join('')}</div>`;
 const cstp=(l,v,k)=>stp(l,v,`mx('cfg',{k:'${k}',d:-1})`,`mx('cfg',{k:'${k}',d:1})`);
 function mp(keep){
@@ -258,7 +258,7 @@ function mp(keep){
   <section><b>Hochstapler</b>${cseg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],c.mode,'mode')}${b?cstp('Anzahl',c.k,'k'):cstp('Maximal',c.max,'max')}</section>
   <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${(c.timer||0)===v?'on':''}" onclick="mx('cfg',{k:'timer',v:${v}})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten</p></section>
   <button class="p" style="margin-top:16px" ${n>=minN?'':'disabled'} onclick="mx('start')">Spiel starten</button>`
-  :`<section><p>${c.type==='turnier'?`Turnier mit ${c.rounds} Runden`:'Blitzrunde'}, ${b?`${c.k} Hochstapler`:`Geheim mit höchstens ${c.max} Hochstaplern`}.</p><p class="mut">${c.timer?`Timer: ${c.timer} Min. `:''}Der Host startet das Spiel.</p></section>`)
+  :`<section><p>${c.type==='turnier'?`Turnier mit ${c.rounds} Runden`:'Blitzrunde'}, ${b?`${c.k} Hochstapler`:`Geheim mit höchstens ${c.max} Hochstaplern`}.</p><p class="mut">${c.timer?`Timer: ${c.timer} Min. `:''}${nm(m.host)} startet das Spiel.</p></section>`)
   +`<button onclick="rules('mpBack')">Regeln</button><p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`;
  }else if(m.ph==='role'){const r=m.role,k=m.k;
   h=r.seen?`<h2 class="c" style="margin-top:56px">Warte auf die anderen</h2><p class="c mut">${r.n} von ${n} haben ihre Rolle gesehen.</p>`
@@ -268,7 +268,7 @@ function mp(keep){
  }else if(m.ph==='talk'){
   h=`${c.type==='turnier'?`<p class="mut">Runde ${m.round} von ${c.rounds}</p>`:''}<h2>Hinweisrunde</h2>${m.tend?'<p id="tm" class="c mut"></p>':''}<p>Reihum sagt jeder laut ein Hinweiswort. Nicht zu deutlich, sonst erkennt es der Hochstapler.</p>
   <section><b>Reihenfolge</b><ol>${m.order.map(i=>`<li>${nm(i)}</li>`).join('')}</ol></section><p>Danach wird frei diskutiert.</p>`
-  +(H?`<button class="p" onclick="mx('next')">Zur Abstimmung</button>`:`<p class="c mut">Der Host startet die Abstimmung.</p>`);
+  +(H?`<button class="p" onclick="mx('next')">Zur Abstimmung</button>`:`<p class="c mut">${nm(m.host)} startet die Abstimmung.</p>`);
  }else if(m.ph==='vote'){const ok=b?SEL.length===m.k:SEL.length>=1;
   h=`<h2>Wer ist verdächtig?</h2>`+(m.my?`<p class="mut">Dein Tipp ist abgegeben: ${m.my.map(nm).join(', ')}.</p><p class="c">${m.voted} von ${n} haben getippt.</p>`
    :`<p class="mut">${b?`Es gibt ${m.k} Hochstapler. Wähle genau ${m.k}.`:'Wähle beliebig viele Verdächtige. Wer mehr tippt, als es Hochstapler gibt, verliert Punkte.'}</p>`
