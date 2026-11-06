@@ -41,17 +41,49 @@ a.chip{color:var(--ivory);text-decoration:none}
 .bar{display:flex;justify-content:space-between;margin-bottom:-8px}.bar .x{margin:0}
 details p,details li{color:var(--ivory)}
 .x{display:block;width:44px;height:44px;padding:0;margin:0 0 -8px;border-radius:50%;font-size:20px;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.cat{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;min-height:98px;margin:0;padding:8px 4px;font-size:13px;line-height:1.25;border-radius:12px;overflow-wrap:anywhere;hyphens:auto;opacity:.55}
+.cat.on{opacity:1}.cat.ro{pointer-events:none}
+.cat i{font-style:normal;font-size:24px;line-height:1}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
-const WORDS=['Pizza','Hund','Auto','Sonne','Fußball'];
+const CATS=[
+{id:"essen",n:"Essen & Trinken",e:"🍕",w:[["Pizza", "Apfel", "Brot", "Käse", "Nudeln", "Kuchen", "Schokolade", "Banane", "Kartoffel", "Milch", "Wasser", "Ei", "Suppe", "Reis", "Wurst", "Eis", "Tomate", "Kaffee", "Orange", "Butter"],["Lasagne", "Pfannkuchen", "Gurke", "Joghurt", "Müsli", "Brezel", "Limonade", "Honig", "Spaghetti", "Hamburger", "Pommes", "Erdbeere", "Marmelade", "Salat", "Currywurst", "Schnitzel", "Rührei", "Tee", "Cola", "Zitrone"],["Risotto", "Sauerkraut", "Fondue", "Baguette", "Quark", "Sushi", "Mettbrötchen", "Kartoffelsalat", "Gulasch", "Rosinen", "Ketchup", "Muffin", "Zimtschnecke", "Bratwurst", "Camembert", "Sauerbraten", "Brokkoli", "Haferflocken", "Maultaschen", "Knödel"]]},
+{id:"tiere",n:"Tiere",e:"🐶",w:[["Hund", "Katze", "Pferd", "Kuh", "Schwein", "Vogel", "Fisch", "Hase", "Maus", "Ente", "Löwe", "Elefant", "Affe", "Bär", "Schaf", "Huhn", "Frosch", "Schmetterling", "Biene", "Giraffe"],["Pinguin", "Delfin", "Krokodil", "Eichhörnchen", "Igel", "Fuchs", "Wolf", "Papagei", "Schildkröte", "Känguru", "Zebra", "Nilpferd", "Hai", "Eule", "Hirsch", "Marienkäfer", "Spinne", "Adler", "Gans", "Ziege"],["Faultier", "Chamäleon", "Seepferdchen", "Stachelschwein", "Dachs", "Flamingo", "Waschbär", "Biber", "Nashorn", "Krake", "Glühwürmchen", "Libelle", "Maulwurf", "Pfau", "Qualle", "Otter", "Luchs", "Wiesel", "Ameisenbär", "Salamander"]]},
+{id:"laender",n:"Länder & Städte",e:"🌍",w:[["Deutschland", "Italien", "Spanien", "Frankreich", "Berlin", "Paris", "London", "Österreich", "Schweiz", "Amerika", "China", "Rom", "Hamburg", "München", "Türkei", "Griechenland", "Japan", "Australien", "Wien", "Köln"],["Portugal", "Norwegen", "Ägypten", "Kanada", "Brasilien", "Venedig", "Barcelona", "Amsterdam", "Prag", "Dubai", "Mexiko", "Indien", "Island", "Schweden", "Madrid", "Istanbul", "New York", "Kairo", "Dresden", "Polen"],["Neuseeland", "Marokko", "Argentinien", "Budapest", "Kopenhagen", "Lissabon", "Edinburgh", "Peru", "Kenia", "Vietnam", "Thailand", "Singapur", "Helsinki", "Salzburg", "Hannover", "Rotterdam", "Sevilla", "Florenz", "Kroatien", "Finnland"]]},
+{id:"orte",n:"Orte",e:"📍",w:[["Schule", "Park", "Bahnhof", "Supermarkt", "Kino", "Schwimmbad", "Spielplatz", "Krankenhaus", "Bäckerei", "Zoo", "Küche", "Garten", "Kirche", "Flughafen", "Bibliothek", "Restaurant", "Büro", "Café", "Museum", "Wohnzimmer"],["Rathaus", "Friedhof", "Tankstelle", "Zirkus", "Apotheke", "Fitnessstudio", "Hafen", "Leuchtturm", "Campingplatz", "Stadion", "Disco", "Friseursalon", "Waschsalon", "Brücke", "Marktplatz", "Burg", "Dachboden", "Keller", "Parkplatz", "Gefängnis"],["Observatorium", "Aquarium", "Kegelbahn", "Kloster", "Bergwerk", "Hochhaus", "Raststätte", "Sauna", "Jahrmarkt", "Tierheim", "Kaserne", "Kiosk", "Planetarium", "Windmühle", "Schrebergarten", "Reitstall", "Skatepark", "Wochenmarkt", "Hütte", "Kneipe"]]},
+{id:"berufe",n:"Berufe",e:"👷",w:[["Arzt", "Lehrer", "Bäcker", "Polizist", "Feuerwehrmann", "Koch", "Friseur", "Busfahrer", "Pilot", "Maler", "Verkäufer", "Gärtner", "Sänger", "Zahnarzt", "Postbote", "Metzger", "Tierarzt", "Schreiner", "Bauer", "Kellner"],["Elektriker", "Klempner", "Architekt", "Journalist", "Fotograf", "Schauspieler", "Mechaniker", "Richter", "Anwalt", "Krankenpfleger", "Dachdecker", "Schornsteinfeger", "Optiker", "Florist", "Tänzer", "Astronaut", "Detektiv", "Förster", "Programmierer", "Hausmeister"],["Archäologe", "Dolmetscher", "Gerichtsvollzieher", "Bestatter", "Goldschmied", "Imker", "Dirigent", "Steuerberater", "Ingenieur", "Rettungsschwimmer", "Taucher", "Zollbeamter", "Bibliothekar", "Hebamme", "Konditor", "Lokführer", "Sanitäter", "Fliesenleger", "Tätowierer", "Kartograf"]]},
+{id:"sport",n:"Sport",e:"⚽",w:[["Fußball", "Tennis", "Schwimmen", "Laufen", "Radfahren", "Basketball", "Handball", "Volleyball", "Turnen", "Skifahren", "Tischtennis", "Boxen", "Reiten", "Golf", "Eishockey", "Wandern", "Rudern", "Judo", "Yoga", "Bowling"],["Badminton", "Rugby", "Segeln", "Surfen", "Klettern", "Fechten", "Ringen", "Snowboard", "Eiskunstlauf", "Bogenschießen", "Leichtathletik", "Hochsprung", "Kegeln", "Squash", "Triathlon", "Skateboard", "Kanu", "Gewichtheben", "Biathlon", "Rodeln"],["Curling", "Speerwurf", "Hammerwurf", "Stabhochsprung", "Kunstturnen", "Wasserball", "Synchronschwimmen", "Dressurreiten", "Bobfahren", "Skispringen", "Eisschnelllauf", "Kitesurfen", "Orientierungslauf", "Hindernislauf", "Sumo", "Lacrosse", "Polo", "Cricket", "Baseball", "Bouldern"]]},
+{id:"hobbys",n:"Hobbys",e:"🎨",w:[["Lesen", "Malen", "Zeichnen", "Kochen", "Backen", "Gärtnern", "Fotografieren", "Basteln", "Stricken", "Angeln", "Singen", "Tanzen", "Schach", "Puzzeln", "Nähen", "Sammeln", "Töpfern", "Camping", "Zaubern", "Musizieren"],["Häkeln", "Origami", "Briefmarken", "Münzsammeln", "Modellbau", "Schreiben", "Bloggen", "Schnitzen", "Geocaching", "Vogelbeobachtung", "Sudoku", "Kreuzworträtsel", "Karaoke", "Brettspiele", "Heimwerken", "Kalligrafie", "Makramee", "Bügelperlen", "Sternegucken", "Kerzenziehen"],["Falknerei", "Bonsai", "Scrapbooking", "Cosplay", "Jonglieren", "Pantomime", "Drohnenfliegen", "Mineraliensammeln", "Schmieden", "Glasbläserei", "Weinverkostung", "Modelleisenbahn", "Imkerei", "Oldtimerpflege", "Seidenmalerei", "Linoldruck", "Patchwork", "Kakteenzucht", "Aquaristik", "Fossiliensuche"]]},
+{id:"haushalt",n:"Haushalt",e:"🏠",w:[["Tisch", "Stuhl", "Bett", "Sofa", "Lampe", "Teller", "Gabel", "Löffel", "Messer", "Tasse", "Besen", "Eimer", "Schrank", "Spiegel", "Teppich", "Kissen", "Decke", "Herd", "Kühlschrank", "Dusche"],["Staubsauger", "Waschmaschine", "Toaster", "Bügeleisen", "Wasserkocher", "Geschirrtuch", "Mülleimer", "Kochtopf", "Pfanne", "Sieb", "Kerze", "Vorhang", "Handtuch", "Zahnbürste", "Seife", "Wecker", "Regal", "Badewanne", "Spüle", "Schwamm"],["Spülmaschine", "Dosenöffner", "Kartoffelstampfer", "Nudelholz", "Reibe", "Schneebesen", "Fusselrolle", "Wäscheklammer", "Türstopper", "Schuhlöffel", "Kleiderbügel", "Bügelbrett", "Eierbecher", "Salzstreuer", "Fliegenklatsche", "Kehrschaufel", "Thermoskanne", "Untersetzer", "Korkenzieher", "Flaschenöffner"]]},
+{id:"natur",n:"Natur",e:"🌲",w:[["Baum", "Blume", "Berg", "Fluss", "See", "Wiese", "Gras", "Sand", "Stein", "Meer", "Blatt", "Ast", "Pilz", "Hügel", "Bach", "Insel", "Feld", "Rose", "Tanne", "Sonnenblume"],["Wasserfall", "Vulkan", "Gletscher", "Höhle", "Klippe", "Düne", "Sumpf", "Moor", "Tal", "Quelle", "Lagune", "Eiche", "Birke", "Farn", "Moos", "Löwenzahn", "Tannenzapfen", "Eichel", "Kaktus", "Bambus"],["Geysir", "Fjord", "Savanne", "Tundra", "Korallenriff", "Delta", "Schlucht", "Plateau", "Mangrove", "Regenwald", "Steppe", "Heide", "Atoll", "Findling", "Stalaktit", "Kiefer", "Lavendel", "Orchidee", "Mammutbaum", "Bernstein"]]},
+{id:"fahrzeuge",n:"Fahrzeuge",e:"🚗",w:[["Auto", "Fahrrad", "Bus", "Zug", "Flugzeug", "Schiff", "Motorrad", "Traktor", "Roller", "Boot", "Lastwagen", "Hubschrauber", "Straßenbahn", "Taxi", "U-Bahn", "Krankenwagen", "Feuerwehrauto", "Bagger", "Kinderwagen", "Rakete"],["Segelboot", "Wohnmobil", "Fähre", "Wohnwagen", "Gabelstapler", "Kran", "Quad", "Tretroller", "Müllwagen", "Kutsche", "Schlitten", "Panzer", "Heißluftballon", "Zeppelin", "Rennwagen", "Jetski", "Cabrio", "Dampflok", "Pickup", "Lieferwagen"],["Segway", "Rikscha", "Gondel", "Draisine", "Seilbahn", "Mähdrescher", "Schneepflug", "Planierraupe", "Tankwagen", "Schubkarre", "Katamaran", "Tretboot", "Hängegleiter", "Bergbahn", "Oldtimer", "Hochrad", "Lastenrad", "Rettungsboot", "Sattelschlepper", "Kehrmaschine"]]},
+{id:"kleidung",n:"Kleidung",e:"👕",w:[["Hose", "Jacke", "Pullover", "Schuhe", "Socken", "Mütze", "Schal", "Handschuhe", "Kleid", "Rock", "Hemd", "T-Shirt", "Gürtel", "Stiefel", "Unterhose", "Mantel", "Jeans", "Pyjama", "Hut", "Brille"],["Krawatte", "Weste", "Bluse", "Anzug", "Badehose", "Bikini", "Regenmantel", "Sandalen", "Turnschuhe", "Leggings", "Strumpfhose", "Kapuzenpullover", "Latzhose", "Trenchcoat", "Shorts", "Poncho", "Fliege", "Sakko", "Trikot", "Hausschuhe"],["Smoking", "Cape", "Kummerbund", "Rollkragenpullover", "Pumphose", "Korsett", "Kimono", "Dirndl", "Lederhose", "Unterhemd", "Cordhose", "Gamaschen", "Schlaghose", "Zylinder", "Baskenmütze", "Strohhut", "Ohrenschützer", "Overall", "Morgenmantel", "Halstuch"]]},
+{id:"musik",n:"Musik & Instrumente",e:"🎸",w:[["Gitarre", "Klavier", "Geige", "Flöte", "Trommel", "Trompete", "Saxofon", "Mikrofon", "Lied", "Orchester", "Chor", "Konzert", "Radio", "Noten", "Band", "Bass", "Harfe", "Keyboard", "Tamburin", "Xylofon"],["Cello", "Klarinette", "Posaune", "Akkordeon", "Mundharmonika", "Dudelsack", "Blockflöte", "Schlagzeug", "Triangel", "Ukulele", "Banjo", "Taktstock", "Notenschlüssel", "Metronom", "Rassel", "Tuba", "Oboe", "Konzertflügel", "Plattenspieler", "Verstärker"],["Fagott", "Zither", "Hackbrett", "Glockenspiel", "Kontrabass", "Piccolo", "Bongo", "Didgeridoo", "Maracas", "Panflöte", "Sitar", "Harmonium", "Cembalo", "Orgel", "Kastagnetten", "Querflöte", "Waldhorn", "Spieluhr", "Stimmgabel", "Kazoo"]]},
+{id:"koerper",n:"Körper",e:"🦶",w:[["Kopf", "Nase", "Mund", "Auge", "Ohr", "Hand", "Fuß", "Bein", "Arm", "Finger", "Haare", "Zahn", "Bauch", "Rücken", "Herz", "Knie", "Zunge", "Hals", "Daumen", "Zeh"],["Ellenbogen", "Schulter", "Lippe", "Wimper", "Augenbraue", "Kinn", "Stirn", "Wange", "Handgelenk", "Knöchel", "Ferse", "Nagel", "Hüfte", "Nacken", "Gaumen", "Lunge", "Magen", "Rippe", "Brust", "Gesicht"],["Zwerchfell", "Schlüsselbein", "Wirbelsäule", "Achillessehne", "Leber", "Niere", "Milz", "Bandscheibe", "Kniescheibe", "Gehirn", "Netzhaut", "Trommelfell", "Speiseröhre", "Darm", "Daumenballen", "Fußsohle", "Handfläche", "Kehlkopf", "Mandeln", "Schienbein"]]},
+{id:"schule",n:"Schule & Büro",e:"📚",w:[["Stift", "Heft", "Buch", "Tafel", "Lineal", "Radiergummi", "Schere", "Kleber", "Rucksack", "Mäppchen", "Klassenzimmer", "Pause", "Zeugnis", "Hausaufgabe", "Schreibtisch", "Papier", "Bleistift", "Buntstift", "Taschenrechner", "Stundenplan"],["Locher", "Tacker", "Büroklammer", "Ordner", "Aktenkoffer", "Kopierer", "Whiteboard", "Textmarker", "Spitzer", "Füller", "Zirkel", "Geodreieck", "Schulranzen", "Klassenarbeit", "Schulhof", "Aula", "Pausenbrot", "Notizblock", "Haftnotiz", "Umschlag"],["Laminiergerät", "Reißzwecke", "Aktenvernichter", "Overheadprojektor", "Tintenkiller", "Klebeband", "Sekretariat", "Stempelkissen", "Aktenschrank", "Besprechungsraum", "Abitur", "Diplom", "Referat", "Protokoll", "Schnellhefter", "Hängeregister", "Lesezeichen", "Wörterbuch", "Zettelkasten", "Kreide"]]},
+{id:"feste",n:"Feste & Feiertage",e:"🎉",w:[["Weihnachten", "Ostern", "Geburtstag", "Silvester", "Hochzeit", "Karneval", "Nikolaus", "Geschenk", "Weihnachtsbaum", "Osterhase", "Feuerwerk", "Luftballon", "Party", "Taufe", "Halloween", "Ostereier", "Adventskranz", "Konfetti", "Einladung", "Lebkuchen"],["Pfingsten", "Fasching", "Erntedank", "Muttertag", "Vatertag", "Valentinstag", "Neujahr", "Allerheiligen", "Oktoberfest", "Schützenfest", "Laternenumzug", "Himmelfahrt", "Silberhochzeit", "Jubiläum", "Richtfest", "Abschlussfeier", "Einschulung", "Kommunion", "Konfirmation", "Weihnachtsmarkt"],["Walpurgisnacht", "Fronleichnam", "Aschermittwoch", "Rosenmontag", "Maibaum", "Dreikönigstag", "Polterabend", "Junggesellenabschied", "Diwali", "Chanukka", "Ramadan", "Zuckerfest", "Thanksgiving", "Nationalfeiertag", "Sonnenwende", "Lichterfest", "Ostermontag", "Karfreitag", "Heiligabend", "Pessach"]]},
+{id:"urlaub",n:"Urlaub & Reisen",e:"🧳",w:[["Strand", "Koffer", "Hotel", "Sonnenbrille", "Sonnencreme", "Zelt", "Reisepass", "Landkarte", "Badeanzug", "Ferienhaus", "Sonnenschirm", "Liegestuhl", "Postkarte", "Souvenir", "Ticket", "Kreuzfahrt", "Ferien", "Reiseführer", "Schnorchel", "Luftmatratze"],["Jugendherberge", "Pauschalreise", "Rundreise", "Stadtführung", "Visum", "Zollkontrolle", "Gepäckband", "Handgepäck", "Reiseapotheke", "Flugticket", "Wüstentour", "Safari", "Kofferwaage", "Hängematte", "Strandkorb", "Buchungsbestätigung", "Reisebüro", "Rucksacktour", "Mietwagen", "Ferienwohnung"],["Zwischenlandung", "Zeitverschiebung", "Reisewarnung", "Reiseversicherung", "Schlafwagen", "Gepäckträger", "Nachtzug", "Trampen", "Fernweh", "Reiseleiter", "Bordkarte", "Einchecken", "Hostel", "Sehenswürdigkeit", "Wanderkarte", "Reiseproviant", "Strandliege", "Vollpension", "Mitfahrgelegenheit", "Kurtaxe"]]},
+{id:"technik",n:"Technik & Elektronik",e:"💻",w:[["Handy", "Computer", "Fernseher", "Kamera", "Kopfhörer", "Tastatur", "Computermaus", "Drucker", "Lautsprecher", "Akku", "Batterie", "Steckdose", "Kabel", "Ladegerät", "Fernbedienung", "Tablet", "Laptop", "Bildschirm", "Taschenlampe", "Router"],["Webcam", "Smartwatch", "Powerbank", "Navigationsgerät", "Spielkonsole", "Joystick", "Beamer", "Scanner", "Speicherkarte", "Festplatte", "Verlängerungskabel", "Mehrfachsteckdose", "Mähroboter", "Rasierer", "Föhn", "Thermostat", "Soundbar", "Drohne", "Videokamera", "Antenne"],["Oszilloskop", "Kondensator", "Transistor", "Platine", "Mikrochip", "Prozessor", "Grafikkarte", "Arbeitsspeicher", "Netzteil", "Sicherung", "Schalter", "Dimmer", "Bewegungsmelder", "Rauchmelder", "Satellitenschüssel", "Glasfaser", "Modem", "Server", "Barcodescanner", "Thermometer"]]},
+{id:"maerchen",n:"Märchen & Fantasie",e:"🐉",w:[["Drache", "Hexe", "Zauberer", "Prinzessin", "Prinz", "König", "Königin", "Schloss", "Zauberstab", "Fee", "Riese", "Zwerg", "Einhorn", "Geist", "Vampir", "Kristallkugel", "Krone", "Zaubertrank", "Schatzkarte", "Piratenschiff"],["Werwolf", "Zombie", "Meerjungfrau", "Kobold", "Elfe", "Troll", "Rotkäppchen", "Aschenputtel", "Dornröschen", "Schneewittchen", "Rumpelstilzchen", "Froschkönig", "Knusperhäuschen", "Zauberspiegel", "Flaschengeist", "Zauberteppich", "Phönix", "Pegasus", "Rattenfänger", "Wichtel"],["Basilisk", "Greif", "Zentaur", "Minotaurus", "Sphinx", "Hydra", "Zyklop", "Golem", "Banshee", "Nixe", "Gnom", "Irrlicht", "Lindwurm", "Walküre", "Zauberlehrling", "Waldgeist", "Hexenbesen", "Zauberwald", "Drachenei", "Feenstaub"]]},
+{id:"spiele",n:"Spiele & Spielzeug",e:"🧩",w:[["Puzzle", "Teddy", "Ball", "Puppe", "Kartenspiel", "Würfel", "Rutsche", "Memory", "Seifenblasen", "Kreisel", "Springseil", "Murmel", "Sandeimer", "Bauklötze", "Schaukel", "Wippe", "Plüschtier", "Spielzeugauto", "Knete", "Hüpfburg"],["Domino", "Mikado", "Wackelturm", "Kicker", "Dartscheibe", "Jojo", "Frisbee", "Bumerang", "Gummitwist", "Spielzeugeisenbahn", "Ritterburg", "Murmelbahn", "Wasserpistole", "Zauberwürfel", "Stelzen", "Hampelmann", "Puppenhaus", "Schaukelpferd", "Kaleidoskop", "Schneekugel"],["Tangram", "Backgammon", "Mahjong", "Halma", "Dame", "Skat", "Rommé", "Doppelkopf", "Poker", "Bingo", "Roulette", "Flipper", "Stehaufmännchen", "Diabolo", "Kasperletheater", "Kaufladen", "Steckenpferd", "Zauberkasten", "Experimentierkasten", "Metallbaukasten"]]},
+{id:"werkzeug",n:"Werkzeug & Handwerk",e:"🔨",w:[["Hammer", "Säge", "Zange", "Schraubenzieher", "Schraube", "Bohrer", "Schaufel", "Leiter", "Axt", "Pinsel", "Farbe", "Zollstock", "Feile", "Hobel", "Schleifpapier", "Spaten", "Werkbank", "Wasserwaage", "Gartenschere", "Werkzeugkasten"],["Akkuschrauber", "Stichsäge", "Bohrmaschine", "Schraubenschlüssel", "Meißel", "Winkelschleifer", "Kreissäge", "Heißklebepistole", "Maßband", "Spachtel", "Farbroller", "Kelle", "Hacke", "Rechen", "Schweißgerät", "Dübel", "Schraubstock", "Nietzange", "Amboss", "Spitzhacke"],["Drechselbank", "Stemmeisen", "Fuchsschwanz", "Gliedermaßstab", "Lötkolben", "Rohrzange", "Gewindeschneider", "Richtscheit", "Senkblei", "Ahle", "Gehrungslade", "Schweißbrenner", "Schmiedehammer", "Töpferscheibe", "Webstuhl", "Nähmaschine", "Bandsäge", "Schlagbohrer", "Oberfräse", "Flachzange"]]},
+{id:"wetter",n:"Wetter & Jahreszeiten",e:"🌈",w:[["Sonne", "Regen", "Schnee", "Wind", "Wolke", "Gewitter", "Blitz", "Donner", "Nebel", "Hagel", "Regenbogen", "Frühling", "Sommer", "Herbst", "Winter", "Schneemann", "Hitze", "Kälte", "Regenschirm", "Pfütze"],["Sturm", "Orkan", "Tornado", "Hurrikan", "Dürre", "Hochwasser", "Überschwemmung", "Lawine", "Glatteis", "Schneeflocke", "Eiszapfen", "Raureif", "Morgentau", "Windstille", "Sonnenschein", "Dämmerung", "Sonnenaufgang", "Sonnenuntergang", "Polarlicht", "Schneesturm"],["Sonnenfinsternis", "Mondfinsternis", "Tagundnachtgleiche", "Hitzewelle", "Kaltfront", "Hochdruckgebiet", "Tiefdruckgebiet", "Luftfeuchtigkeit", "Taupunkt", "Wetterfahne", "Wetterfrosch", "Barometer", "Windstärke", "Nieselregen", "Platzregen", "Graupel", "Schneeregen", "Altweibersommer", "Eisheilige", "Wetterbericht"]]}
+];
+const LV=['leicht','mittel','schwer'],LVN={alle:'Gemischt',leicht:'Leicht',mittel:'Mittel',schwer:'Schwer'},HN={cat:'Kategorie',none:'Nichts'};
+const catById=id=>CATS.find(c=>c.id===id)||CATS[0];
+const catLine=id=>{const c=catById(id);return `<p class="mut">Kategorie: ${c.e} ${esc(c.n)}</p>`};
+const catGrid=(list,sel,fn)=>`<div class="grid">${list.map(c=>{const on=sel.includes(c.id);return `<button class="cat ${on?'on':''} ${fn?'':'ro'}" aria-pressed="${on}" ${fn?`onclick="${fn}('${c.id}')"`:'tabindex="-1"'}><i>${c.e}</i><span>${c.n.split(' & ').map(esc).join('<br>&amp;<br>')}</span></button>`}).join('')}</div>`;
+const catDet=sel=>`<details><summary>Kategorien dieser Runde (${sel.length})</summary>${catGrid(CATS.filter(c=>sel.includes(c.id)),sel)}</details>`;
 const $=s=>document.getElementById(s);
-let C={names:[],type:'blitz',rounds:5,mode:'bekannt',k:1,max:2,maxAuto:true,timer:0};
-let G=null,SC={},RN=1,SEL=[],used=[],inGame=false;
+let C={names:[],type:'blitz',rounds:5,mode:'bekannt',k:1,max:2,maxAuto:true,timer:0,cats:CATS.map(c=>c.id),lv:'alle',hint:'cat'};
+let G=null,SC={},RN=1,SEL=[],inGame=false;
 try{Object.assign(C,JSON.parse(localStorage.getItem('hochstapler')||'{}'))}catch(e){}
+if(!Array.isArray(C.cats))C.cats=CATS.map(c=>c.id);C.cats=C.cats.filter(id=>CATS.some(c=>c.id===id));if(!['alle',...LV].includes(C.lv))C.lv='alle';if(!HN[C.hint])C.hint='cat';
 const save=()=>{try{localStorage.setItem('hochstapler',JSON.stringify(C))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const show=(h,keep,nb)=>{const y=scrollY;$('app').innerHTML=(inGame&&!nb?'<div class="bar"><button class="x" aria-label="Spiel abbrechen" onclick="quit()">✕</button><button class="x" aria-label="Regeln" onclick="openRules()">?</button></div>':'')+h;scrollTo(0,keep?y:0)};
@@ -62,7 +94,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-13';
+const VERSION='6.11.-14';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -85,11 +117,23 @@ function setup(keep){
  <section><b>Spielart</b>${seg([['blitz','Blitzrunde'],['turnier','Turnier']],C.type,'type')}${C.type==='turnier'?stp('Runden',C.rounds,"chg('rounds',-1)","chg('rounds',1)"):''}</section>
  <section><b>Hochstapler</b>${seg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],C.mode,'mode')}
  ${geh?stp('Maximal',C.max,"chg('max',-1)","chg('max',1)")+'<p class="mut">Die echte Anzahl wird zufällig zwischen 1 und dem Maximum gewählt.</p>':stp('Anzahl',C.k,"chg('k',-1)","chg('k',1)")}</section>
- <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
- <button class="p" style="margin-top:18px" ${n>=minN?'':'disabled'} onclick="start()">Spiel starten</button>
+ <section><b>Kategorien</b><p class="mut">${C.cats.length} von ${CATS.length} gewählt</p><button onclick="catPage()">Kategorien wählen</button></section>
+ <section><b>Schwierigkeit</b>${seg(Object.entries(LVN),C.lv,'lv')}</section>
+ <section><b>Hochstapler sieht</b>${seg(Object.entries(HN),C.hint,'hint')}<p class="mut">Die Kategorie des Wortes oder nichts.</p></section>
+ <section><b>Wortgedächtnis</b><p class="mut">Gespielt: ${usedN()} von ${CATS.length*60} Wörtern. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
+ <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}\" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
+ <button class="p" style="margin-top:18px" ${n>=minN&&C.cats.length?'':'disabled'} onclick="start()">Spiel starten</button>
  <button onclick="rules('setup')">Regeln</button>
  <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);
 }
+
+function usedN(){try{return JSON.parse(localStorage.getItem('hs_used')||'[]').length}catch(e){return 0}}
+function resetUsed(){if(confirm('Wortgedächtnis zurücksetzen? Danach können sich Wörter wieder wiederholen.')){try{localStorage.removeItem('hs_used')}catch(e){}setup(true)}}
+function catPage(keep){show(`<button class="x" aria-label="Zurück" onclick="setup()">←</button><h2>Kategorien</h2><p class="mut">${C.cats.length} von ${CATS.length} gewählt. Das Wort jeder Runde kommt zufällig aus einer der gewählten Kategorien.</p>
+ <div class="row seg"><button onclick="catAll(1)">Alle</button><button onclick="catAll(0)">Keine</button></div>${catGrid(CATS,C.cats,'catTog')}
+ <button class="p" style="margin-top:14px" onclick="setup()">Fertig</button>`,keep)}
+function catTog(id){const i=C.cats.indexOf(id);if(i>=0)C.cats.splice(i,1);else C.cats.push(id);save();catPage(true)}
+function catAll(a){C.cats=a?CATS.map(c=>c.id):[];save();catPage(true)}
 
 /* Regeln */
 function mpBack(){inRules=false;lastPh='';mp()}
@@ -118,17 +162,30 @@ function rules(b){inRules=(b==='mpBack');
  <table><tr><td>Tipp auf einen Hochstapler zählt auch ohne Enttarnung</td><td class="n">+1</td></tr>
  <tr><td>Pro Tipp mehr als es Hochstapler gibt (dann keine Treffer-Punkte)</td><td class="n">−1</td></tr></table>
  <p class="mut">Beispiel: Ein Hochstapler wird enttarnt und rät falsch. Er bekommt 0 Punkte, alle Mitspieler +1 (Team), wer ihn getippt hat, noch +1 dazu, also 2.</p></details>
+ <details><summary>Wörter und Kategorien</summary>
+ <p>Es gibt ${CATS.length} Kategorien mit je 60 Wörtern (leicht, mittel, schwer). Gewählt werden eine oder mehrere Kategorien, das Wort jeder Runde kommt zufällig aus einer davon.</p>
+ <p>Kein Wort wiederholt sich, bis alle Wörter der Auswahl gespielt wurden, auch über Runden und Spiele hinweg.</p>
+ <p>Der Hochstapler sieht je nach Einstellung die Kategorie des Wortes oder nichts.</p></details>
  <button class="p" style="margin-top:16px" onclick="${b}()">Zurück</button>`,0,1);
 }
 
 /* Runde */
-function pickWord(){let p=WORDS.filter(w=>!used.includes(w));if(!p.length){used=[];p=WORDS}const w=p[Math.random()*p.length|0];used.push(w);return w}
-function start(){SC={};C.names.forEach(x=>SC[x]=0);RN=1;used=[];newRound()}
+function drawWord(){
+ let U=[];try{U=JSON.parse(localStorage.getItem('hs_used')||'[]')}catch(e){}
+ const P=[];CATS.filter(c=>C.cats.includes(c.id)).forEach(c=>c.w.forEach((l,i)=>{if(C.lv==='alle'||C.lv===LV[i])l.forEach(w=>P.push({w,c:c.id}))}));
+ let p=P.filter(x=>!U.includes(x.w));
+ if(!p.length){const ws=P.map(x=>x.w);U=U.filter(w=>!ws.includes(w));p=P}
+ const r=p[Math.random()*p.length|0];U.push(r.w);
+ try{localStorage.setItem('hs_used',JSON.stringify(U))}catch(e){}
+ return r}
+function catIntro(){const s=C.cats;show(`<h2>Kategorien dieser Runde</h2><p class="mut">Das Wort stammt aus einer dieser Kategorien.</p>${catGrid(CATS.filter(c=>s.includes(c.id)),s)}<button class="p" style="margin-top:14px" onclick="hand(0,'role')">Weiter</button>`)}
+function start(){SC={};C.names.forEach(x=>SC[x]=0);RN=1;newRound()}
 function newRound(){
  inGame=true;
  const P=C.names,k=C.mode==='geheim'?1+(Math.random()*C.max|0):C.k;
- G={k,imp:shuffle(P).slice(0,k),word:pickWord(),votes:{},guess:{},start:P[Math.random()*P.length|0]};
- hand(0,'role');
+ const r=drawWord();
+ G={k,imp:shuffle(P).slice(0,k),word:r.w,cat:r.c,votes:{},guess:{},start:P[Math.random()*P.length|0]};
+ catIntro();
 }
 function hand(i,ph){
  const P=C.names;
@@ -138,8 +195,8 @@ function hand(i,ph){
 }
 function showRole(i){
  const p=C.names[i],h=G.imp.includes(p),b=C.mode==='bekannt';
- show(h?`<div class="face h" data-s="♥"><p class="mut">${esc(p)}, du bist</p><div class="big">der Hochstapler</div><p>Du kennst das Wort nicht. Hör gut zu und bluffe dich durch.</p><p class="mut">${b?`Es gibt ${G.k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p></div>`
- :`<div class="face" data-s="♠"><p class="mut">${esc(p)}, dein Wort</p><div class="big">${esc(G.word)}</div><p class="mut">${b?`Unter euch ${G.k==1?'ist 1 Hochstapler':'sind '+G.k+' Hochstapler'}.`:`Unter euch sind höchstens ${C.max} Hochstapler.`}</p></div>`);
+ show(h?`<div class="face h" data-s="♥"><p class="mut">${esc(p)}, du bist</p><div class="big">der Hochstapler</div><p>Du kennst das Wort nicht. Hör gut zu und bluffe dich durch.</p><p class="mut">${b?`Es gibt ${G.k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p>${C.hint==='cat'?catLine(G.cat):''}</div>`
+ :`<div class="face" data-s="♠"><p class="mut">${esc(p)}, dein Wort</p><div class="big">${esc(G.word)}</div><p class="mut">${b?`Unter euch ${G.k==1?'ist 1 Hochstapler':'sind '+G.k+' Hochstapler'}.`:`Unter euch sind höchstens ${C.max} Hochstapler.`}</p>${catLine(G.cat)}</div>`);
  $('app').insertAdjacentHTML('beforeend',`<button class="p" onclick="hand(${i+1},'role')">Verstanden, Handy weitergeben</button>`);
 }
 function talk(){
@@ -147,7 +204,7 @@ function talk(){
  const P=C.names,s=P.indexOf(G.start),o=P.map((_,j)=>P[(s+j)%P.length]);
  show(`${C.type==='turnier'?`<p class="mut">Runde ${RN} von ${C.rounds}</p>`:''}<h2>Hinweisrunde</h2>${C.timer?'<p id="tm" class="c mut"></p>':''}
  <p>Reihum sagt jeder laut ein Hinweiswort. Nicht zu deutlich, sonst erkennt es der Hochstapler.</p>
- <section><b>Reihenfolge</b><ol>${o.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>
+ <section><b>Reihenfolge</b><ol>${o.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>${catDet(C.cats)}
  <p>Danach wird frei diskutiert. Wenn ihr bereit seid:</p><button class="p" onclick="hand(0,'vote')">Zur Abstimmung</button>`);tick();
 }
 
@@ -191,12 +248,18 @@ function result2(){
   d[v]=s});
  if(turn)P.forEach(x=>SC[x]+=d[x]);
  const W=allLost?V:I.filter(h=>won[h]),last=turn&&RN>=C.rounds,S=[...P].sort((a,b)=>SC[b]-SC[a]);
- show(`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(G.word)}</div>
+ show(`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(G.word)}</div><div class="c">${catLine(G.cat)}</div>
  <section class="c"><b>${allLost?'Die Mitspieler gewinnen':W.length>1?'Es gewinnen die Hochstapler':'Es gewinnt der Hochstapler'}</b><p>${W.map(esc).join(', ')}</p></section>
  ${turn?`<section><b>${last?'Endstand':`Stand nach Runde ${RN} von ${C.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(x=>`<tr><td>${last&&x===S[0]?'🥇 ':''}${esc(x)}${I.includes(x)?' 🎭':''}</td><td class="n ${d[x]<0?'r':d[x]>0?'g':''}">${d[x]>0?'+':''}${d[x]}</td><td class="n"><b>${SC[x]}</b></td></tr>`).join('')}</table></section>`:''}
  ${turn?(last?'<button class="p" onclick="setup()">Neues Spiel</button>':'<button class="p" onclick="RN++;newRound()">Nächste Runde</button>'):'<button class="p" onclick="newRound()">Noch eine Runde</button>'}`);
 }
 /* Multiplayer */
+const catMx=id=>mx('cfg',{k:'cat',v:id});
+function catSec(c,H){
+ return `<section><b>Kategorien (${c.cats.length} von ${CATS.length})</b>${H?`<div class="row seg" style="margin-top:8px"><button onclick="mx('cfg',{k:'catall',v:1})">Alle</button><button onclick="mx('cfg',{k:'catall',v:0})">Keine</button></div>`:''}${catGrid(CATS,c.cats,H?'catMx':'')}</section>`
+ +(H?`<section><b>Schwierigkeit</b>${cseg(Object.entries(LVN),c.lv,'lv')}</section><section><b>Hochstapler sieht</b>${cseg(Object.entries(HN),c.hint,'hint')}</section>
+ <section><b>Wortgedächtnis</b><p class="mut">Gilt für alle Räume. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="if(confirm('Wortgedächtnis zurücksetzen? Danach können sich Wörter wieder wiederholen.'))mx('resetwords')">Zurücksetzen</button></section>`
+  :`<section><p class="mut">Schwierigkeit: ${LVN[c.lv]||'Gemischt'} · Hochstapler sieht: ${HN[c.hint]||'Kategorie'}</p></section>`)}
 const API='https://hochstapler.spam-lama.workers.dev';
 const TEST=new URLSearchParams(location.search).has('test'),store=TEST?sessionStorage:localStorage;
 let TOK=null;try{TOK=localStorage.getItem('hs_tok')}catch(e){}
@@ -228,6 +291,7 @@ function connect(code,name){myCode=code;mpOn=true;inGame=false;
  w.onopen=()=>w.send(JSON.stringify({t:'join',name,pid}));
  w.onmessage=e=>{got=true;const m=JSON.parse(e.data);
   if(m.t==='me'){try{store.setItem('hs_pid_'+code,m.pid)}catch(x){}}
+  else if(m.t==='note'){alert(m.e)}
   else if(m.t==='err'){mpOn=false;try{w.close()}catch(x){}alert(m.e);home()}
   else{M=m;OFF=(m.now||Date.now())-Date.now();if(!inRules)mp()}};
  w.onclose=()=>{if(!mpOn||ws!==w)return;if(!got){mpOn=false;alert('Der Raum wurde nicht gefunden oder der Server ist nicht erreichbar.');home()}else setTimeout(()=>mpOn&&connect(code,name),1500)}}
@@ -256,18 +320,19 @@ function mp(keep){
   +(TEST?`<section><b>Testmodus</b><p class="mut">Weitere Spieler in neuen Tabs öffnen:</p>${[2,3,4,5,6].map(i=>`<a class="chip" target="_blank" rel="noopener" href="${location.origin+location.pathname}?raum=${m.code}&test=1&name=Spieler%20${i}">Spieler ${i}</a>`).join('')}</section>`:'')
   +(H?`<section><b>Spielart</b>${cseg([['blitz','Blitzrunde'],['turnier','Turnier']],c.type,'type')}${c.type==='turnier'?cstp('Runden',c.rounds,'rounds'):''}</section>
   <section><b>Hochstapler</b>${cseg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],c.mode,'mode')}${b?cstp('Anzahl',c.k,'k'):cstp('Maximal',c.max,'max')}</section>
+  ${catSec(c,true)}
   <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${(c.timer||0)===v?'on':''}" onclick="mx('cfg',{k:'timer',v:${v}})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten</p></section>
-  <button class="p" style="margin-top:16px" ${n>=minN?'':'disabled'} onclick="mx('start')">Spiel starten</button>`
-  :`<section><p>${c.type==='turnier'?`Turnier mit ${c.rounds} Runden`:'Blitzrunde'}, ${b?`${c.k} Hochstapler`:`Geheim mit höchstens ${c.max} Hochstaplern`}.</p><p class="mut">${c.timer?`Timer: ${c.timer} Min. `:''}${nm(m.host)} startet das Spiel.</p></section>`)
+  <button class="p" style="margin-top:16px" ${n>=minN&&c.cats&&c.cats.length?'':'disabled'} onclick="mx('start')">Spiel starten</button>`
+  :`<section><p>${c.type==='turnier'?`Turnier mit ${c.rounds} Runden`:'Blitzrunde'}, ${b?`${c.k} Hochstapler`:`Geheim mit höchstens ${c.max} Hochstaplern`}.</p><p class="mut">${c.timer?`Timer: ${c.timer} Min. `:''}${nm(m.host)} startet das Spiel.</p></section>`+(c.cats?catSec(c,false):''))
   +`<button onclick="rules('mpBack')">Regeln</button><p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION} · Server ${m.wv||'veraltet'}</p>`;
  }else if(m.ph==='role'){const r=m.role,k=m.k;
   h=r.seen?`<h2 class="c" style="margin-top:56px">Warte auf die anderen</h2><p class="c mut">${r.n} von ${n} haben ihre Rolle gesehen.</p>`
-  :(r.imp?`<div class="face h" data-s="♥"><p class="mut">Du bist</p><div class="big">der Hochstapler</div><p>Du kennst das Wort nicht. Hör gut zu und bluffe dich durch.</p><p class="mut">${b?`Es gibt ${k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p></div>`
-   :`<div class="face" data-s="♠"><p class="mut">Dein Wort</p><div class="big">${esc(r.word)}</div><p class="mut">${b?`Unter euch ${k==1?'ist 1 Hochstapler':'sind '+k+' Hochstapler'}.`:`Unter euch sind höchstens ${c.max} Hochstapler.`}</p></div>`)
+  :(r.imp?`<div class="face h" data-s="♥"><p class="mut">Du bist</p><div class="big">der Hochstapler</div><p>Du kennst das Wort nicht. Hör gut zu und bluffe dich durch.</p><p class="mut">${b?`Es gibt ${k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p>${r.cat?catLine(r.cat):''}</div>`
+   :`<div class="face" data-s="♠"><p class="mut">Dein Wort</p><div class="big">${esc(r.word)}</div><p class="mut">${b?`Unter euch ${k==1?'ist 1 Hochstapler':'sind '+k+' Hochstapler'}.`:`Unter euch sind höchstens ${c.max} Hochstapler.`}</p>${r.cat?catLine(r.cat):''}</div>`)
    +`<button class="p" onclick="mx('seen')">Verstanden</button>`;
  }else if(m.ph==='talk'){
   h=`${c.type==='turnier'?`<p class="mut">Runde ${m.round} von ${c.rounds}</p>`:''}<h2>Hinweisrunde</h2>${m.tend?'<p id="tm" class="c mut"></p>':''}<p>Reihum sagt jeder laut ein Hinweiswort. Nicht zu deutlich, sonst erkennt es der Hochstapler.</p>
-  <section><b>Reihenfolge</b><ol>${m.order.map(i=>`<li>${nm(i)}</li>`).join('')}</ol></section><p>Danach wird frei diskutiert.</p>`
+  <section><b>Reihenfolge</b><ol>${m.order.map(i=>`<li>${nm(i)}</li>`).join('')}</ol></section>${c.cats?catDet(c.cats):''}<p>Danach wird frei diskutiert.</p>`
   +(H?`<button class="p" onclick="mx('next')">Zur Abstimmung</button>`:`<p class="c mut">${nm(m.host)} startet die Abstimmung.</p>`);
  }else if(m.ph==='vote'){const ok=b?SEL.length===m.k:SEL.length>=1;
   h=`<h2>Wer ist verdächtig?</h2>`+(m.my?`<p class="mut">Dein Tipp ist abgegeben: ${m.my.map(nm).join(', ')}.</p><p class="c">${m.voted} von ${n} haben getippt.</p>`
@@ -285,7 +350,7 @@ function mp(keep){
    :m.me===gu?`<p>Nenne laut einen Begriff, nur ein Versuch.</p><p class="mut">${nm(jd)} entscheidet, ob es stimmt.</p>`
    :`<p>${nm(gu)} nennt laut einen Begriff. ${nm(jd)} entscheidet, ob es stimmt.</p>`);
  }else if(m.ph==='result'){const R=m.res,turn=c.type==='turnier',S=[...P].sort((a,z)=>z.sc-a.sc);
-  h=`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(R.word)}</div>
+  h=`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(R.word)}</div>${R.cat?`<div class="c">${catLine(R.cat)}</div>`:''}
   <section class="c"><b>${R.allLost?'Die Mitspieler gewinnen':R.W.length>1?'Es gewinnen die Hochstapler':'Es gewinnt der Hochstapler'}</b><p>${R.W.map(nm).join(', ')}</p></section>`
   +(turn?`<section><b>${R.last?'Endstand':`Stand nach Runde ${m.round} von ${c.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(p=>`<tr><td>${R.last&&p===S[0]?'🥇 ':''}${esc(p.name)}${m.rev.imp.includes(p.id)?' 🎭':''}</td><td class="n ${R.d[p.id]<0?'r':R.d[p.id]>0?'g':''}">${R.d[p.id]>0?'+':''}${R.d[p.id]}</td><td class="n"><b>${p.sc}</b></td></tr>`).join('')}</table></section>`:'')
   +(H?`<button class="p" onclick="mx('next')">${R.last?'Zurück zur Lobby':turn?'Nächste Runde':'Noch eine Runde'}</button>`:`<p class="c mut">Das Spiel geht weiter.</p>`);
