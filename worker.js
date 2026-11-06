@@ -208,4 +208,4 @@ export class Room {
   push() {
     for (const [pid, sock] of this.ws) { try { sock.send(JSON.stringify(this.view(pid))); } catch (e) {} }
   }
-}
+} 
