@@ -35,6 +35,8 @@ body{min-height:100vh;min-height:100dvh;background-image:repeating-linear-gradie
 .face .ic{display:block;margin:0 auto 6px;width:40px;height:40px;object-fit:contain}
 .face p{color:var(--ink)}.face .mut{color:#5b6075}
 .logo{display:block;width:50px;height:50px;object-fit:contain;margin:6px 0 0}
+h1.t{font-family:"Didot","Bodoni 72","Bodoni MT","Playfair Display","Iowan Old Style",Georgia,serif;font-weight:400;font-size:33px;letter-spacing:.14em;text-transform:uppercase;text-align:center;margin:6px 0 4px;line-height:1.15}
+.sub{font-family:"Baskerville","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Noto Serif",serif;font-style:italic;font-size:19px;letter-spacing:.02em;color:var(--mut);text-align:center;margin:4px 0 14px}
 .logo.big{width:210px;height:auto;max-height:none;margin:18px auto 6px}
 table{width:100%;border-collapse:collapse}td,th{padding:7px 2px;border-bottom:1px solid var(--line);text-align:left;font-weight:400}.n{text-align:right;white-space:nowrap;padding-left:10px}
 .tag{font-size:13px;border-radius:8px;padding:2px 8px;background:var(--red);color:var(--ivory)}
@@ -102,7 +104,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-20';
+const VERSION='6.11.-21';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -212,7 +214,7 @@ function talk(){
  TEND=C.timer?Date.now()+C.timer*60000:0;OFF=0;
  const P=C.names,s=P.indexOf(G.start),o=P.map((_,j)=>P[(s+j)%P.length]);
  show(`${C.type==='turnier'?`<p class="mut">Runde ${RN} von ${C.rounds}</p>`:''}<h2>Hinweisrunde</h2>${C.timer?'<p id="tm" class="c mut"></p>':''}
- <p>Reihum sagt jeder laut ein Hinweiswort. Nicht zu deutlich, sonst erkennt es der Hochstapler.</p>
+ <p>Nenne ein Hinweiswort, ohne dich zu verraten.</p>
  <section><b>Reihenfolge</b><ol>${o.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></section>${catDet(C.cats)}
  <p>Danach wird frei diskutiert. Wenn ihr bereit seid:</p><button class="p" onclick="hand(0,'vote')">Zur Abstimmung</button>`);tick();
 }
@@ -277,14 +279,14 @@ let TOK=null;try{TOK=localStorage.getItem('hs_tok')}catch(e){}
 let REVL=false,REVSEEN=false,lastRound=-1,ws=null,M=null,mpOn=false,myCode='',lastPh='',inRules=false;
 const jpost=(path,b)=>fetch(API+path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
 const mx=(t,x)=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t,...x}))};
-function gate(msg){inGame=false;show(`${LOGOBIG}<h1 class="c">Hochstapler</h1><p class="mut c">Bitte Passwort eingeben</p><input id="pw" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')login()"><button class="p" style="margin-top:12px" onclick="login()">Weiter</button>${msg?`<p class="r">${msg}</p>`:''}`)}
+function gate(msg){inGame=false;show(`${LOGOBIG}<h1 class="t">Hochstapler</h1><p class="sub">Nur für geladene Gäste.</p><input id="pw" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')login()"><button class="p" style="margin-top:12px" onclick="login()">Weiter</button>${msg?`<p class="r">${msg}</p>`:''}`)}
 async function login(){const r=await jpost('/api/login',{pw:$('pw').value}).catch(()=>null);if(!r)return gate('Keine Verbindung zum Server.');if(!r.ok)return gate('Passwort falsch.');TOK=(await r.json()).token;try{localStorage.setItem('hs_tok',TOK)}catch(e){}home()}
 function boot(){const q=new URLSearchParams(location.search).get('raum');
  if(q){const tn=new URLSearchParams(location.search).get('name'),qc=q.toUpperCase().replace(/[^A-Z]/g,'');if(TEST&&tn)return connect(qc,tn);return nameScreen(q)}
  if(!TOK)return gate();
  fetch(API+'/api/check?token='+TOK).then(r=>r.ok?home():gate()).catch(()=>home())}
 function home(){inGame=false;mpOn=false;if(ws){try{ws.close()}catch(e){}}
- show(`${LOGOBIG}<h1 class="c">Hochstapler</h1><p class="mut c">Wer kennt das Wort nicht?</p>
+ show(`${LOGOBIG}<h1 class="t">Hochstapler</h1><p class="sub">Nenne ein Wort, ohne dich zu verraten.</p>
  <button class="p" style="margin-top:24px" onclick="create()">Raum erstellen</button>
  <section><b>Raum beitreten</b><div class="row" style="margin-top:8px"><input id="rc" placeholder="Raumcode" maxlength="4" style="text-transform:uppercase"><button style="flex:none;width:110px;margin:0" onclick="nameScreen($('rc').value)">Weiter</button></div></section>
  <section><button onclick="setup()">Ein Handy (Pass-and-Play)</button><button onclick="rules('home')">Regeln</button></section>
@@ -343,7 +345,7 @@ function mp(keep){
    :`<div class="face" onclick="REVL=false;mp(true)">${ICO(0)}<p class="mut">Dein Wort</p><div class="big">${esc(r.word)}</div><p class="mut">${b?`Unter euch ${k==1?'ist 1 Hochstapler':'sind '+k+' Hochstapler'}.`:`Unter euch sind höchstens ${c.max} Hochstapler.`}</p>${r.cat?catLine(r.cat):''}${HIDE}</div>`)
    +`<button class="p" ${REVSEEN?'':'disabled'} onclick="mx('seen')">Verstanden</button>`;
  }else if(m.ph==='talk'){
-  h=`${c.type==='turnier'?`<p class="mut">Runde ${m.round} von ${c.rounds}</p>`:''}<h2>Hinweisrunde</h2>${m.tend?'<p id="tm" class="c mut"></p>':''}<p>Reihum sagt jeder laut ein Hinweiswort. Nicht zu deutlich, sonst erkennt es der Hochstapler.</p>
+  h=`${c.type==='turnier'?`<p class="mut">Runde ${m.round} von ${c.rounds}</p>`:''}<h2>Hinweisrunde</h2>${m.tend?'<p id="tm" class="c mut"></p>':''}<p>Nenne ein Hinweiswort, ohne dich zu verraten.</p>
   <section><b>Reihenfolge</b><ol>${m.order.map(i=>`<li>${nm(i)}</li>`).join('')}</ol></section>${c.cats?catDet(c.cats):''}<p>Danach wird frei diskutiert.</p>`
   +(H?`<button class="p" onclick="mx('next')">Zur Abstimmung</button>`:`<p class="c mut">${nm(m.host)} startet die Abstimmung.</p>`);
  }else if(m.ph==='vote'){const ok=b?SEL.length===m.k:SEL.length>=1;
