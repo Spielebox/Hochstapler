@@ -74,16 +74,17 @@ const CATS=[
 {id:"werkzeug",n:"Werkzeug & Handwerk",e:"🔨",w:[["Hammer", "Säge", "Zange", "Schraubenzieher", "Schraube", "Bohrer", "Schaufel", "Leiter", "Axt", "Pinsel", "Farbe", "Zollstock", "Feile", "Hobel", "Schleifpapier", "Spaten", "Werkbank", "Wasserwaage", "Gartenschere", "Werkzeugkasten"],["Akkuschrauber", "Stichsäge", "Bohrmaschine", "Schraubenschlüssel", "Meißel", "Winkelschleifer", "Kreissäge", "Heißklebepistole", "Maßband", "Spachtel", "Farbroller", "Kelle", "Hacke", "Rechen", "Schweißgerät", "Dübel", "Schraubstock", "Nietzange", "Amboss", "Spitzhacke"],["Drechselbank", "Stemmeisen", "Fuchsschwanz", "Gliedermaßstab", "Lötkolben", "Rohrzange", "Gewindeschneider", "Richtscheit", "Senkblei", "Ahle", "Gehrungslade", "Schweißbrenner", "Schmiedehammer", "Töpferscheibe", "Webstuhl", "Nähmaschine", "Bandsäge", "Schlagbohrer", "Oberfräse", "Flachzange"]]},
 {id:"wetter",n:"Wetter & Jahreszeiten",e:"🌈",w:[["Sonne", "Regen", "Schnee", "Wind", "Wolke", "Gewitter", "Blitz", "Donner", "Nebel", "Hagel", "Regenbogen", "Frühling", "Sommer", "Herbst", "Winter", "Schneemann", "Hitze", "Kälte", "Regenschirm", "Pfütze"],["Sturm", "Orkan", "Tornado", "Hurrikan", "Dürre", "Hochwasser", "Überschwemmung", "Lawine", "Glatteis", "Schneeflocke", "Eiszapfen", "Raureif", "Morgentau", "Windstille", "Sonnenschein", "Dämmerung", "Sonnenaufgang", "Sonnenuntergang", "Polarlicht", "Schneesturm"],["Sonnenfinsternis", "Mondfinsternis", "Tagundnachtgleiche", "Hitzewelle", "Kaltfront", "Hochdruckgebiet", "Tiefdruckgebiet", "Luftfeuchtigkeit", "Taupunkt", "Wetterfahne", "Wetterfrosch", "Barometer", "Windstärke", "Nieselregen", "Platzregen", "Graupel", "Schneeregen", "Altweibersommer", "Eisheilige", "Wetterbericht"]]}
 ];
-const LV=['leicht','mittel','schwer'],LVN={alle:'Gemischt',leicht:'Leicht',mittel:'Mittel',schwer:'Schwer'},HN={cat:'Kategorie',none:'Nichts'};
+const LV=['leicht','mittel','schwer'],LVN={leicht:'Leicht',mittel:'Mittel',schwer:'Schwer'},HN={cat:'Kategorie',none:'Nichts'};
+const lvBtns=(cur,fn)=>`<div class="row seg">${LV.map(v=>`<button class="${cur.includes(v)?'on':''}" aria-pressed="${cur.includes(v)}" onclick="${fn}('${v}')">${LVN[v]}</button>`).join('')}</div>`;
 const catById=id=>CATS.find(c=>c.id===id)||CATS[0];
 const catLine=id=>{const c=catById(id);return `<p class="mut">Kategorie: ${c.e} ${esc(c.n)}</p>`};
 const catGrid=(list,sel,fn)=>`<div class="grid">${list.map(c=>{const on=sel.includes(c.id);return `<button class="cat ${on?'on':''} ${fn?'':'ro'}" aria-pressed="${on}" ${fn?`onclick="${fn}('${c.id}')"`:'tabindex="-1"'}><i>${c.e}</i><span>${c.n.split(' & ').map(esc).join('<br>&amp;<br>')}</span></button>`}).join('')}</div>`;
 const catDet=sel=>`<details><summary>Kategorien dieser Runde (${sel.length})</summary>${catGrid(CATS.filter(c=>sel.includes(c.id)),sel)}</details>`;
 const $=s=>document.getElementById(s);
-let C={names:[],type:'blitz',rounds:5,mode:'bekannt',k:1,max:2,maxAuto:true,timer:0,cats:CATS.map(c=>c.id),lv:'alle',hint:'cat'};
+let C={names:[],type:'blitz',rounds:5,mode:'bekannt',k:1,max:2,maxAuto:true,timer:0,cats:CATS.map(c=>c.id),lv:[...LV],hint:'cat'};
 let G=null,SC={},RN=1,SEL=[],inGame=false;
 try{Object.assign(C,JSON.parse(localStorage.getItem('hochstapler')||'{}'))}catch(e){}
-if(!Array.isArray(C.cats))C.cats=CATS.map(c=>c.id);C.cats=C.cats.filter(id=>CATS.some(c=>c.id===id));if(!['alle',...LV].includes(C.lv))C.lv='alle';if(!HN[C.hint])C.hint='cat';
+if(!Array.isArray(C.cats))C.cats=CATS.map(c=>c.id);C.cats=C.cats.filter(id=>CATS.some(c=>c.id===id));if(!Array.isArray(C.lv))C.lv=LV.includes(C.lv)?[C.lv]:[...LV];C.lv=LV.filter(v=>C.lv.includes(v));if(!C.lv.length)C.lv=[...LV];if(!HN[C.hint])C.hint='cat';
 const save=()=>{try{localStorage.setItem('hochstapler',JSON.stringify(C))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const show=(h,keep,nb)=>{const y=scrollY;$('app').innerHTML=(inGame&&!nb?'<div class="bar"><button class="x" aria-label="Spiel abbrechen" onclick="quit()">✕</button><button class="x" aria-label="Regeln" onclick="openRules()">?</button></div>':'')+h;scrollTo(0,keep?y:0)};
@@ -94,7 +95,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-14';
+const VERSION='6.11.-15';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -118,7 +119,7 @@ function setup(keep){
  <section><b>Hochstapler</b>${seg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],C.mode,'mode')}
  ${geh?stp('Maximal',C.max,"chg('max',-1)","chg('max',1)")+'<p class="mut">Die echte Anzahl wird zufällig zwischen 1 und dem Maximum gewählt.</p>':stp('Anzahl',C.k,"chg('k',-1)","chg('k',1)")}</section>
  <section><b>Kategorien</b><p class="mut">${C.cats.length} von ${CATS.length} gewählt</p><button onclick="catPage()">Kategorien wählen</button></section>
- <section><b>Schwierigkeit</b>${seg(Object.entries(LVN),C.lv,'lv')}</section>
+ <section><b>Schwierigkeit</b>${lvBtns(C.lv,'lvTog')}<p class="mut">Mehrere wählbar. Alle drei ergeben eine Mischung.</p></section>
  <section><b>Hochstapler sieht</b>${seg(Object.entries(HN),C.hint,'hint')}<p class="mut">Die Kategorie des Wortes oder nichts.</p></section>
  <section><b>Wortgedächtnis</b><p class="mut">Gespielt: ${usedN()} von ${CATS.length*60} Wörtern. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}\" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
@@ -127,6 +128,7 @@ function setup(keep){
  <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);
 }
 
+function lvTog(v){const i=C.lv.indexOf(v);if(i>=0){if(C.lv.length>1)C.lv.splice(i,1)}else C.lv.push(v);C.lv=LV.filter(x=>C.lv.includes(x));save();setup(true)}
 function usedN(){try{return JSON.parse(localStorage.getItem('hs_used')||'[]').length}catch(e){return 0}}
 function resetUsed(){if(confirm('Wortgedächtnis zurücksetzen? Danach können sich Wörter wieder wiederholen.')){try{localStorage.removeItem('hs_used')}catch(e){}setup(true)}}
 function catPage(keep){show(`<button class="x" aria-label="Zurück" onclick="setup()">←</button><h2>Kategorien</h2><p class="mut">${C.cats.length} von ${CATS.length} gewählt. Das Wort jeder Runde kommt zufällig aus einer der gewählten Kategorien.</p>
@@ -172,7 +174,7 @@ function rules(b){inRules=(b==='mpBack');
 /* Runde */
 function drawWord(){
  let U=[];try{U=JSON.parse(localStorage.getItem('hs_used')||'[]')}catch(e){}
- const P=[];CATS.filter(c=>C.cats.includes(c.id)).forEach(c=>c.w.forEach((l,i)=>{if(C.lv==='alle'||C.lv===LV[i])l.forEach(w=>P.push({w,c:c.id}))}));
+ const P=[];CATS.filter(c=>C.cats.includes(c.id)).forEach(c=>c.w.forEach((l,i)=>{if(C.lv.includes(LV[i]))l.forEach(w=>P.push({w,c:c.id}))}));
  let p=P.filter(x=>!U.includes(x.w));
  if(!p.length){const ws=P.map(x=>x.w);U=U.filter(w=>!ws.includes(w));p=P}
  const r=p[Math.random()*p.length|0];U.push(r.w);
@@ -254,12 +256,12 @@ function result2(){
  ${turn?(last?'<button class="p" onclick="setup()">Neues Spiel</button>':'<button class="p" onclick="RN++;newRound()">Nächste Runde</button>'):'<button class="p" onclick="newRound()">Noch eine Runde</button>'}`);
 }
 /* Multiplayer */
-const catMx=id=>mx('cfg',{k:'cat',v:id});
+const catMx=id=>mx('cfg',{k:'cat',v:id}),lvMx=v=>mx('cfg',{k:'lv',v});
 function catSec(c,H){
  return `<section><b>Kategorien (${c.cats.length} von ${CATS.length})</b>${H?`<div class="row seg" style="margin-top:8px"><button onclick="mx('cfg',{k:'catall',v:1})">Alle</button><button onclick="mx('cfg',{k:'catall',v:0})">Keine</button></div>`:''}${catGrid(CATS,c.cats,H?'catMx':'')}</section>`
- +(H?`<section><b>Schwierigkeit</b>${cseg(Object.entries(LVN),c.lv,'lv')}</section><section><b>Hochstapler sieht</b>${cseg(Object.entries(HN),c.hint,'hint')}</section>
+ +(H?`<section><b>Schwierigkeit</b>${lvBtns(c.lv,'lvMx')}<p class="mut">Mehrere wählbar.</p></section><section><b>Hochstapler sieht</b>${cseg(Object.entries(HN),c.hint,'hint')}</section>
  <section><b>Wortgedächtnis</b><p class="mut">Gilt für alle Räume. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="if(confirm('Wortgedächtnis zurücksetzen? Danach können sich Wörter wieder wiederholen.'))mx('resetwords')">Zurücksetzen</button></section>`
-  :`<section><p class="mut">Schwierigkeit: ${LVN[c.lv]||'Gemischt'} · Hochstapler sieht: ${HN[c.hint]||'Kategorie'}</p></section>`)}
+  :`<section><p class="mut">Schwierigkeit: ${(c.lv||LV).map(v=>LVN[v]).join(', ')} · Hochstapler sieht: ${HN[c.hint]||'Kategorie'}</p></section>`)}
 const API='https://hochstapler.spam-lama.workers.dev';
 const TEST=new URLSearchParams(location.search).has('test'),store=TEST?sessionStorage:localStorage;
 let TOK=null;try{TOK=localStorage.getItem('hs_tok')}catch(e){}

@@ -1,5 +1,5 @@
 // Hochstapler: Cloudflare Worker + Durable Object (Klasse Room, Binding ROOMS, Secret PASSWORT)
-const WV = '6.11.-14';
+const WV = '6.11.-15';
 const H = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'content-type': 'application/json' };
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: H });
 const CATS=[
@@ -26,7 +26,7 @@ const CATS=[
 {id:"wetter",n:"Wetter & Jahreszeiten",e:"🌈",w:[["Sonne", "Regen", "Schnee", "Wind", "Wolke", "Gewitter", "Blitz", "Donner", "Nebel", "Hagel", "Regenbogen", "Frühling", "Sommer", "Herbst", "Winter", "Schneemann", "Hitze", "Kälte", "Regenschirm", "Pfütze"],["Sturm", "Orkan", "Tornado", "Hurrikan", "Dürre", "Hochwasser", "Überschwemmung", "Lawine", "Glatteis", "Schneeflocke", "Eiszapfen", "Raureif", "Morgentau", "Windstille", "Sonnenschein", "Dämmerung", "Sonnenaufgang", "Sonnenuntergang", "Polarlicht", "Schneesturm"],["Sonnenfinsternis", "Mondfinsternis", "Tagundnachtgleiche", "Hitzewelle", "Kaltfront", "Hochdruckgebiet", "Tiefdruckgebiet", "Luftfeuchtigkeit", "Taupunkt", "Wetterfahne", "Wetterfrosch", "Barometer", "Windstärke", "Nieselregen", "Platzregen", "Graupel", "Schneeregen", "Altweibersommer", "Eisheilige", "Wetterbericht"]]}
 ];
 const LV = ['leicht', 'mittel', 'schwer'];
-const poolOf = c => CATS.filter(x => c.cats.includes(x.id)).flatMap(x => x.w.flatMap((l, i) => (c.lv === 'alle' || c.lv === LV[i]) ? l : []));
+const poolOf = c => CATS.filter(x => c.cats.includes(x.id)).flatMap(x => x.w.flatMap((l, i) => c.lv.includes(LV[i]) ? l : []));
 const catOf = w => CATS.find(x => x.w.some(l => l.includes(w)));
 const sh = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const maxK = n => Math.max(1, Math.floor((n - 1) / 2));
@@ -70,7 +70,7 @@ export default {
 
 export class Room {
   constructor(st, env) { this.st = st; this.env = env; this.S = null; this.ws = new Map(); this.q = Promise.resolve(); }
-  async load() { if (!this.S) { this.S = (await this.st.storage.get('S')) || null; if (this.S) { const c = this.S.cfg; if (!c.cats) c.cats = CATS.map(x => x.id); if (!c.lv) c.lv = 'alle'; if (!c.hint) c.hint = 'cat'; } } }
+  async load() { if (!this.S) { this.S = (await this.st.storage.get('S')) || null; if (this.S) { const c = this.S.cfg; if (!c.cats) c.cats = CATS.map(x => x.id); if (!Array.isArray(c.lv)) c.lv = LV.includes(c.lv) ? [c.lv] : [...LV]; if (!c.hint) c.hint = 'cat'; } } }
   async save() { await this.st.storage.put('S', this.S); }
 
   async fetch(req) {
@@ -89,7 +89,7 @@ export class Room {
     await this.load();
     if (u.pathname === '/init') {
       if (this.S) return new Response('x', { status: 409 });
-      this.S = { code: u.searchParams.get('code'), players: [], host: null, ph: 'lobby', cfg: { type: 'blitz', rounds: 5, mode: 'bekannt', k: 1, max: 2, timer: 0, cats: CATS.map(x => x.id), lv: 'alle', hint: 'cat' }, round: 0, G: null };
+      this.S = { code: u.searchParams.get('code'), players: [], host: null, ph: 'lobby', cfg: { type: 'blitz', rounds: 5, mode: 'bekannt', k: 1, max: 2, timer: 0, cats: CATS.map(x => x.id), lv: [...LV], hint: 'cat' }, round: 0, G: null };
       await this.save();
       return new Response('ok');
     }
@@ -184,7 +184,7 @@ export class Room {
       if (m.t === 'cfg') {
         if (m.k === 'type' || m.k === 'mode') { if (['blitz', 'turnier', 'bekannt', 'geheim'].includes(m.v)) c[m.k] = m.v; }
         else if (['k', 'max', 'rounds'].includes(m.k)) { c[m.k] += m.d > 0 ? 1 : -1; if (m.k === 'max') c.maxSet = true; }
-        else if (m.k === 'lv') { if (['alle', ...LV].includes(m.v)) c.lv = m.v; }
+        else if (m.k === 'lv') { if (LV.includes(m.v)) { const i = c.lv.indexOf(m.v); if (i >= 0) { if (c.lv.length > 1) c.lv.splice(i, 1); } else c.lv = LV.filter(x => x === m.v || c.lv.includes(x)); } }
         else if (m.k === 'hint') { if (['cat', 'none'].includes(m.v)) c.hint = m.v; }
         else if (m.k === 'cat') { const i = c.cats.indexOf(m.v); if (i >= 0) c.cats.splice(i, 1); else if (CATS.some(x => x.id === m.v)) c.cats.push(m.v); }
         else if (m.k === 'catall') c.cats = m.v ? CATS.map(x => x.id) : [];
