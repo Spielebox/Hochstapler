@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#141a33">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hochstapler">
 <title>Hochstapler</title>
 <style>
 :root{--felt:#141a33;--ivory:#f4eedf;--ink:#1b1f33;--mut:#a7aec9;--brass:#d9a441;--red:#c23b4e;--line:rgba(244,238,223,.2)}
@@ -155,7 +160,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-43';
+const VERSION='6.11.-44';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
