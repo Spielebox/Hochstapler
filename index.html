@@ -160,7 +160,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-44';
+const VERSION='6.11.-46';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -258,13 +258,13 @@ function hand(i,ph){
  const P=C.names;
  if(i>=P.length){ph==='role'?talk():result1();return}
  show(`<p class="c mut" style="margin-top:56px">Gib das Handy an</p><div class="big">${esc(P[i])}</div>
- <button class="p" onclick="${ph==='role'?'showRole':'vote'}(${i})">${ph==='role'?'Rolle ansehen':'Tipp abgeben'}</button>`);
+ <button class="p" onclick="${ph==='role'?'showRole':'vote'}(${i})">${ph==='role'?'Ich bin '+esc(P[i])+', Karte ansehen':'Tipp abgeben'}</button>`);
 }
 function showRole(i){
  const p=C.names[i],h=G.imp.includes(p),b=C.mode==='bekannt';
- show(h?FLIP(`${ICO(1)}<p class="mut">${esc(p)}, du bist</p><div class="big">der Hochstapler</div><p>Bluffe dich durch.</p><p class="mut">${b?`Es gibt ${G.k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p>${C.hint==='cat'?catLine(G.cat):''}${HIDE}`,'h',1,`hand(${i},'role')`)
- :FLIP(`${ICO(0)}<p class="mut">${esc(p)}, dein Wort</p>${BW(G.word)}<p class="mut">${b?`Unter euch ${G.k==1?'ist 1 Hochstapler':'sind '+G.k+' Hochstapler'}.`:`Unter euch sind höchstens ${C.max} Hochstapler.`}</p>${catLine(G.cat)}${HIDE}`,'',1,`hand(${i},'role')`));
- $('app').insertAdjacentHTML('beforeend',`<button class="p" onclick="hand(${i+1},'role')">Verstanden, Handy weitergeben</button>`);
+ show(h?FLIP(`${ICO(1)}<p class="mut">${esc(p)}, du bist</p><div class="big">der Hochstapler</div><p>Bluffe dich durch.</p><p class="mut">${b?`Es gibt ${G.k} Hochstapler.`:'Wie viele Hochstapler es gibt, weißt du nicht.'}</p>${C.hint==='cat'?catLine(G.cat):''}${HIDE}`,'h',0,`ppFlip(${i})`,'fl')
+ :FLIP(`${ICO(0)}<p class="mut">${esc(p)}, dein Wort</p>${BW(G.word)}<p class="mut">${b?`Unter euch ${G.k==1?'ist 1 Hochstapler':'sind '+G.k+' Hochstapler'}.`:`Unter euch sind höchstens ${C.max} Hochstapler.`}</p>${catLine(G.cat)}${HIDE}`,'',0,`ppFlip(${i})`,'fl'));
+ $('app').insertAdjacentHTML('beforeend',`<p class="mut c" style="font-size:14px">Achte darauf, dass niemand mitliest. Nach dem Verdecken geht es automatisch weiter.</p>`);
 }
 function talk(){
  TEND=C.timer?Date.now()+C.timer*60000:0;OFF=0;
@@ -322,6 +322,8 @@ function result2(){
 /* Multiplayer */
 let QRON=true;try{QRON=localStorage.getItem('hs_qr')!=='0'}catch(e){}
 function qrTog(){QRON=!QRON;try{localStorage.setItem('hs_qr',QRON?'1':'0')}catch(e){}const w=$('qrw'),b=$('qrb');if(w)w.classList.toggle('off',!QRON);if(b)b.textContent=QRON?'QR ausblenden':'QR anzeigen'}
+let ppSeen=0,ppT=0;
+function ppFlip(i){const f=$('fl');if(!f)return;const on=f.classList.toggle('on');if(on){ppSeen=1;clearTimeout(ppT)}else if(ppSeen){ppSeen=0;clearTimeout(ppT);ppT=setTimeout(()=>{if(!document.querySelector('#fl.on'))hand(i+1,'role')},750)}}
 function mpFlip(){REVL=!REVL;if(REVL)REVSEEN=true;const f=$('fl'),v=$('vb');if(f)f.classList.toggle('on',REVL);if(v)v.disabled=!REVSEEN}
 const catMx=id=>mx('cfg',{k:'cat',v:id}),lvMx=v=>mx('cfg',{k:'lv',v});
 function catSec(c,H){
