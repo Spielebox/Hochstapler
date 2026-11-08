@@ -75,10 +75,12 @@ details p,details li{color:var(--ivory)}
 .x{display:block;width:44px;height:44px;padding:0;margin:0 0 -8px;border-radius:50%;font-size:20px;line-height:1}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
 .cat{transition:opacity .3s ease,border-color .3s ease,background-color .3s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;min-height:98px;margin:0;padding:8px 4px;font-size:13px;line-height:1.25;border-radius:12px;overflow-wrap:anywhere;hyphens:auto;opacity:.55}
-.cat.img{position:relative;background-size:cover;background-position:center;border-color:rgba(244,238,223,.25)}
+.cat.img{position:relative;background-size:cover;background-position:center;background-clip:padding-box;border-color:#474d68;opacity:1}
+.cat.img::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--felt);opacity:.5;transition:opacity .3s ease;z-index:2;pointer-events:none}
+.cat.img.on::after{opacity:0}
 .cat.img::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(to top,rgba(20,26,51,.92),rgba(20,26,51,.5) 55%,rgba(20,26,51,.25))}
 .cat.img{justify-content:flex-end;padding-bottom:5px}.cat.img span{display:flex;align-items:center;justify-content:center;min-height:3.75em}
-.cat.img>*{position:relative}.cat.img i{display:none}.cat.img span{font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.cat.img>*{position:relative;z-index:3}.cat.img span{transition:opacity .3s ease}.cat.img:not(.on) span{opacity:.8}.cat.img i{display:none}.cat.img span{font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .cat.on{opacity:1}.cat.img.on{border-color:var(--brass);border-width:2px}.cat.ro{pointer-events:none}
 .cat i{font-style:normal;font-size:24px;line-height:1}
 </style>
@@ -152,7 +154,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-40';
+const VERSION='6.11.-41';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
