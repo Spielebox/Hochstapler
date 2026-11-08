@@ -17,7 +17,7 @@ h1{font-size:40px;margin:10px 0 0;line-height:1.1}
 h2{font-size:24px;margin:16px 0 8px;line-height:1.2}
 p{margin:6px 0}.mut{color:var(--mut)}.c{text-align:center}
 section{border-top:1px solid var(--line);padding:14px 0 6px;margin-top:12px}
-button{font:inherit;color:var(--ivory);background:transparent;border:1px solid var(--line);border-radius:10px;padding:13px 16px;width:100%;margin:6px 0;cursor:pointer}
+button{font:inherit;color:var(--ivory);background:transparent;border:1px solid var(--line);border-radius:10px;padding:13px 16px;width:100%;margin:6px 0;cursor:pointer;transition:background-color .25s ease,border-color .25s ease,color .25s ease}
 button.p{background:var(--brass);border-color:var(--brass);color:var(--ink);font-weight:700}
 button:disabled{opacity:.4;cursor:default}
 button.on{border-color:var(--brass);background:rgba(217,164,65,.18)}
@@ -57,7 +57,7 @@ ol.ord{list-style:none;padding:0;margin:8px 0;counter-reset:o}
 .ord li:first-child{font-weight:600}.ord li:first-child::before{background:var(--brass);color:var(--felt);font-style:normal;font-weight:600}
 .ord li i{font:italic 15px Baskerville,"Palatino Linotype",Georgia,serif;font-weight:400;color:var(--mut)}
 .wn{font-family:"Didot","Bodoni 72","Bodoni MT","Playfair Display","Iowan Old Style",Georgia,serif;color:var(--brass);font-size:22px;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 8px;line-height:1.2}
-section>b:first-child{display:block;margin-bottom:9px;font:700 12.5px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+section>b:first-child{display:block;margin-bottom:8px;font:italic 700 18px Baskerville,"Baskerville Old Face",Palatino,"Palatino Linotype",Georgia,serif;letter-spacing:.02em;color:var(--brass)}
 p.s{font-size:14.5px;line-height:1.4;text-align:center;margin:6px 0 14px}
 h1.t.m{font-size:26px;letter-spacing:.1em;margin-top:18px}
 .sub{font-family:"Baskerville","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Noto Serif",serif;font-style:italic;font-size:19px;letter-spacing:.02em;color:var(--mut);text-align:center;margin:4px 0 14px}
@@ -74,7 +74,7 @@ a.chip{color:var(--ivory);text-decoration:none}
 details p,details li{color:var(--ivory)}
 .x{display:block;width:44px;height:44px;padding:0;margin:0 0 -8px;border-radius:50%;font-size:20px;line-height:1}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-.cat{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;min-height:98px;margin:0;padding:8px 4px;font-size:13px;line-height:1.25;border-radius:12px;overflow-wrap:anywhere;hyphens:auto;opacity:.55}
+.cat{transition:opacity .3s ease,border-color .3s ease,background-color .3s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;min-height:98px;margin:0;padding:8px 4px;font-size:13px;line-height:1.25;border-radius:12px;overflow-wrap:anywhere;hyphens:auto;opacity:.55}
 .cat.img{position:relative;background-size:cover;background-position:center;border-color:rgba(244,238,223,.25)}
 .cat.img::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(to top,rgba(20,26,51,.92),rgba(20,26,51,.5) 55%,rgba(20,26,51,.25))}
 .cat.img{justify-content:flex-end;padding-bottom:5px}.cat.img span{display:flex;align-items:center;justify-content:center;min-height:3.75em}
@@ -131,7 +131,20 @@ try{Object.assign(C,JSON.parse(localStorage.getItem('hochstapler')||'{}'))}catch
 if(!Array.isArray(C.cats))C.cats=CATS.map(c=>c.id);C.cats=C.cats.filter(id=>CATS.some(c=>c.id===id));if(!Array.isArray(C.lv))C.lv=LV.includes(C.lv)?[C.lv]:[...LV];C.lv=LV.filter(v=>C.lv.includes(v));if(!C.lv.length)C.lv=[...LV];if(!HN[C.hint])C.hint='cat';
 const save=()=>{try{localStorage.setItem('hochstapler',JSON.stringify(C))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const show=(h,keep,nb)=>{const y=scrollY;$('app').innerHTML=(inGame&&!nb?'<div class="bar"><button class="x" aria-label="Spiel abbrechen" onclick="quit()">✕</button><button class="x" aria-label="Regeln" onclick="openRules()">?</button></div>':'')+h;scrollTo(0,keep?y:0)};
+function morph(a,b){
+ const A=[...a.childNodes],B=[...b.childNodes];
+ B.forEach((nb,i)=>{const na=A[i];
+  if(!na){a.appendChild(nb.cloneNode(true));return}
+  if(na.nodeType!==nb.nodeType||na.nodeName!==nb.nodeName){a.replaceChild(nb.cloneNode(true),na);return}
+  if(nb.nodeType===3){if(na.nodeValue!==nb.nodeValue)na.nodeValue=nb.nodeValue;return}
+  if(nb.nodeType!==1)return;
+  const keepV=/^(INPUT|TEXTAREA|SELECT)$/.test(na.nodeName),det=na.nodeName==='DETAILS';
+  [...na.attributes].forEach(t=>{if(!nb.hasAttribute(t.name)&&!(keepV&&t.name==='value')&&!(det&&t.name==='open'))na.removeAttribute(t.name)});
+  [...nb.attributes].forEach(t=>{if((keepV&&t.name==='value')||(det&&t.name==='open'))return;if(na.getAttribute(t.name)!==t.value)na.setAttribute(t.name,t.value)});
+  morph(na,nb)});
+ for(let i=A.length-1;i>=B.length;i--)a.removeChild(A[i])}
+const show=(h,keep,nb)=>{const y=scrollY,full=(inGame&&!nb?'<div class="bar"><button class="x" aria-label="Spiel abbrechen" onclick="quit()">✕</button><button class="x" aria-label="Regeln" onclick="openRules()">?</button></div>':'')+h,app=$('app');
+ if(keep&&app.firstChild){const t=document.createElement('div');t.innerHTML=full;morph(app,t)}else app.innerHTML=full;scrollTo(0,keep?y:0)};
 let SAVED='',SY=0,TEND=0,OFF=0;
 function openRules(){SAVED=$('app').innerHTML;SY=scrollY;rules('ppBack')}
 function ppBack(){$('app').innerHTML=SAVED;scrollTo(0,SY)}
@@ -139,7 +152,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-39';
+const VERSION='6.11.-40';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
