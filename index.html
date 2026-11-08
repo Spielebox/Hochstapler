@@ -160,7 +160,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-46';
+const VERSION='6.11.-48';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -176,31 +176,31 @@ function setup(keep){
  C.k=Math.min(Math.max(C.k,1),lim);
  if(C.maxAuto!==false)C.max=Math.max(2,Math.floor(n/3));
  C.max=Math.min(Math.max(C.max,2),Math.max(2,lim));
- show(`<button class="x" aria-label="Zurück" onclick="home()">←</button>${LOGOMID}<h1 class="t">Hochstapler</h1><p class="sub">Ein Handy, das reihum geht</p>
+ show(`<div class="bar"><button class="x" aria-label="Zurück" onclick="home()">←</button><button class="x" aria-label="Regeln" onclick="rules('setup')">?</button></div>${LOGOMID}<h1 class="t">Hochstapler</h1><p class="sub">Ein Handy, das reihum geht</p>
  <section><b>Spieler (${n})</b><div>${C.names.map((x,i)=>`<span class="chip">${esc(x)} <b onclick="rm(${i})">✕</b></span>`).join('')}</div>
  <div class="row" style="margin-top:8px"><input id="nm" placeholder="Name" maxlength="14" onkeydown="if(event.key==='Enter')add()"><button style="flex:none;width:80px;margin:0" onclick="add()">+</button></div>
  <p class="mut">Mindestens ${minN} Spieler</p></section>
+ <button class="p" style="margin-top:6px" ${n>=minN&&C.cats.length?'':'disabled'} onclick="start()">Spiel starten</button>${n>=minN&&C.cats.length?'':`<p class="mut c">${n<minN?`Es fehlen noch ${minN-n} Spieler.`:'Wähle mindestens eine Kategorie.'}</p>`}
  <section><b>Spielart</b>${seg([['blitz','Blitzrunde'],['turnier','Turnier']],C.type,'type')}${C.type==='turnier'?stp('Runden',C.rounds,"chg('rounds',-1)","chg('rounds',1)"):''}</section>
  <section><b>Hochstapler</b>${seg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],C.mode,'mode')}
  ${geh?stp('Maximal',C.max,"chg('max',-1)","chg('max',1)")+'<p class="mut">Die echte Anzahl wird zufällig zwischen 1 und dem Maximum gewählt.</p>':stp('Anzahl',C.k,"chg('k',-1)","chg('k',1)")}</section>
- <section><b>Kategorien</b><p class="mut">${C.cats.length} von ${CATS.length} gewählt</p><button onclick="catPage()">Kategorien wählen</button></section>
+ <section><b>Kategorien (${C.cats.length} von ${CATS.length})</b><div class="row seg" style="margin-top:8px"><button onclick="catAll(1)">Alle</button><button onclick="catAll(0)">Keine</button></div>${catGrid(CATS,C.cats,'catTog')}</section>
  <section><b>Schwierigkeit</b>${lvBtns(C.lv,'lvTog')}<p class="mut">Mehrere wählbar. Alle drei ergeben eine Mischung.</p></section>
  <section><b>Hochstapler sieht</b>${seg(Object.entries(HN),C.hint,'hint')}<p class="mut">Die Kategorie des Wortes oder nichts.</p></section>
- <section><b>Wortgedächtnis</b><p class="mut">Gespielt: ${usedN()} von ${TOTAL} Wörtern. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
+ <section><b>Wortgedächtnis</b><p class="mut">Gespielt: <span id="wn">${usedN()}</span> von ${TOTAL} Wörtern. Gilt für Pass-and-Play und Multiplayer. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}\" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
- <button class="p" style="margin-top:18px" ${n>=minN&&C.cats.length?'':'disabled'} onclick="start()">Spiel starten</button>
  <button onclick="rules('setup')">Regeln</button>
- <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);
+ <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);loadWN();
 }
 
 function lvTog(v){const i=C.lv.indexOf(v);if(i>=0){if(C.lv.length>1)C.lv.splice(i,1)}else C.lv.push(v);C.lv=LV.filter(x=>C.lv.includes(x));save();setup(true)}
-function usedN(){try{return JSON.parse(localStorage.getItem('hs_used')||'[]').length}catch(e){return 0}}
-function resetUsed(){if(confirm('Wortgedächtnis zurücksetzen? Danach können sich Wörter wieder wiederholen.')){try{localStorage.removeItem('hs_used')}catch(e){}setup(true)}}
-function catPage(keep){show(`<button class="x" aria-label="Zurück" onclick="setup()">←</button><h2>Kategorien</h2><p class="mut">${C.cats.length} von ${CATS.length} gewählt. Das Wort jeder Runde kommt zufällig aus einer der gewählten Kategorien.</p>
- <div class="row seg"><button onclick="catAll(1)">Alle</button><button onclick="catAll(0)">Keine</button></div>${catGrid(CATS,C.cats,'catTog')}
- <button class="p" style="margin-top:14px" onclick="setup()">Fertig</button>`,keep)}
-function catTog(id){const i=C.cats.indexOf(id);if(i>=0)C.cats.splice(i,1);else C.cats.push(id);save();catPage(true)}
-function catAll(a){C.cats=a?CATS.map(c=>c.id):[];save();catPage(true)}
+let WN=null;
+function usedN(){return WN===null?'…':WN}
+function loadWN(){if(!TOK)return;fetch(API+'/api/wordstat?token='+TOK).then(r=>r.ok?r.json():null).then(j=>{if(j){WN=j.n;const e=$('wn');if(e)e.textContent=WN}}).catch(()=>{})}
+function resetUsed(){if(confirm('Wortgedächtnis zurücksetzen? Das gilt für Pass-and-Play und Multiplayer. Danach können sich Wörter wieder wiederholen.')){try{localStorage.removeItem('hs_used')}catch(e){}
+ fetch(API+'/api/wordreset',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:TOK})}).then(r=>{if(r.ok){WN=0}else alert('Der Server ist nicht erreichbar.')}).catch(()=>alert('Der Server ist nicht erreichbar.')).finally(()=>setup(true))}}
+function catTog(id){const i=C.cats.indexOf(id);if(i>=0)C.cats.splice(i,1);else C.cats.push(id);save();setup(true)}
+function catAll(a){C.cats=a?CATS.map(c=>c.id):[];save();setup(true)}
 
 /* Regeln */
 function mpBack(){inRules=false;lastPh='';mp()}
@@ -237,7 +237,11 @@ function rules(b){inRules=(b==='mpBack');
 }
 
 /* Runde */
-function drawWord(){
+async function drawWord(){
+ try{const r=await fetch(API+'/api/draw',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:TOK,cats:C.cats,lv:C.lv})});
+  if(r.ok){const j=await r.json();if(j.w){if(WN!==null)WN++;return{w:j.w,c:j.c||(CATS.find(c=>c.w.some(l=>l.includes(j.w)))||{}).id}}}}catch(e){}
+ return drawLocal()}
+function drawLocal(){
  let U=[];try{U=JSON.parse(localStorage.getItem('hs_used')||'[]')}catch(e){}
  const P=[];CATS.filter(c=>C.cats.includes(c.id)).forEach(c=>c.w.forEach((l,i)=>{if(C.lv.includes(LV[i]))l.forEach(w=>P.push({w,c:c.id}))}));
  let p=P.filter(x=>!U.includes(x.w));
@@ -247,10 +251,10 @@ function drawWord(){
  return r}
 function catIntro(){const s=C.cats;show(`<h2>Kategorien dieser Runde</h2><p class="mut">Das Wort stammt aus einer dieser Kategorien.</p>${catGrid(CATS.filter(c=>s.includes(c.id)),s)}<button class="p" style="margin-top:14px" onclick="hand(0,'role')">Weiter</button>`)}
 function start(){SC={};C.names.forEach(x=>SC[x]=0);RN=1;newRound()}
-function newRound(){
+async function newRound(){
  inGame=true;
  const P=C.names,k=C.mode==='geheim'?1+(Math.random()*C.max|0):C.k;
- const r=drawWord();
+ const r=await drawWord();
  G={k,imp:shuffle(P).slice(0,k),word:r.w,cat:r.c,votes:{},guess:{},start:P[Math.random()*P.length|0]};
  catIntro();
 }
@@ -336,7 +340,9 @@ const TEST=new URLSearchParams(location.search).has('test'),store=TEST?sessionSt
 let TOK=null;try{TOK=localStorage.getItem('hs_tok')}catch(e){}
 let REVL=false,REVSEEN=false,lastRound=-1,ws=null,M=null,mpOn=false,myCode='',lastPh='',inRules=false;
 const jpost=(path,b)=>fetch(API+path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)});
-const mx=(t,x)=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t,...x}))};
+const mx=(t,x)=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify({t,...x}));if(t==='cfg')setTimeout(saveCfg,700)};
+let NEWROOM='';
+function saveCfg(){try{if(M&&M.ph==='lobby'&&M.me===M.host){const c=M.cfg;localStorage.setItem('hs_mpcfg',JSON.stringify({type:c.type,mode:c.mode,rounds:c.rounds,k:c.k,max:c.max,maxSet:!!c.maxSet,timer:c.timer||0,hint:c.hint,cats:c.cats,lv:c.lv}))}}catch(e){}}
 function gate(msg){inGame=false;show(`${LOGOBIG}<h1 class="t">Hochstapler</h1><p class="sub">Nur für geladene Gäste.</p><input id="pw" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')login()"><button class="p" style="margin-top:12px" onclick="login()">Weiter</button>${msg?`<p class="r">${msg}</p>`:''}`)}
 async function login(){const r=await jpost('/api/login',{pw:$('pw').value}).catch(()=>null);if(!r)return gate('Keine Verbindung zum Server.');if(!r.ok)return gate('Passwort falsch.');TOK=(await r.json()).token;try{localStorage.setItem('hs_tok',TOK)}catch(e){}home()}
 function boot(){const q=new URLSearchParams(location.search).get('raum');
@@ -351,7 +357,7 @@ function home(){inGame=false;mpOn=false;if(ws){try{ws.close()}catch(e){}}
  <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`)}
 async function create(){const r=await jpost('/api/create',{token:TOK}).catch(()=>null);
  if(!r)return alert('Der Server ist nicht erreichbar.');if(r.status===401)return gate('Bitte neu anmelden.');if(!r.ok)return alert('Der Raum konnte nicht erstellt werden.');
- nameScreen((await r.json()).code)}
+ const cd=(await r.json()).code;NEWROOM=cd;nameScreen(cd)}
 function nameScreen(code){code=(code||'').trim().toUpperCase().replace(/[^A-Z]/g,'');if(code.length!==4)return alert('Der Raumcode hat 4 Buchstaben.');
  let n='';try{n=store.getItem('hs_name')||''}catch(e){}
  show(`<button class="x" aria-label="Zurück" onclick="home()">←</button>${LOGOMID}<div class="code">${code}</div><p class="sub" style="margin:6px 0 14px">Wie heißt du?</p><input id="nm2" maxlength="14" value="${esc(n)}" placeholder="Name" onkeydown="if(event.key==='Enter')join('${code}')"><button class="p" style="margin-top:12px" onclick="join('${code}')">Beitreten</button>`)}
@@ -364,11 +370,12 @@ function connect(code,name){myCode=code;mpOn=true;inGame=false;
   if(m.t==='me'){try{store.setItem('hs_pid_'+code,m.pid)}catch(x){}}
   else if(m.t==='note'){alert(m.e)}
   else if(m.t==='err'){mpOn=false;try{w.close()}catch(x){}alert(m.e);home()}
-  else{M=m;OFF=(m.now||Date.now())-Date.now();if(!inRules)mp()}};
+  else{if(NEWROOM===code&&m.ph==='lobby'&&m.me===m.host){NEWROOM='';try{const sc=JSON.parse(localStorage.getItem('hs_mpcfg')||'null');if(sc)mx('setcfg',{cfg:sc})}catch(x){}}
+   M=m;OFF=(m.now||Date.now())-Date.now();if(!inRules)mp()}};
  w.onclose=()=>{if(!mpOn||ws!==w)return;if(!got){mpOn=false;alert('Der Raum wurde nicht gefunden oder der Server ist nicht erreichbar.');home()}else setTimeout(()=>mpOn&&connect(code,name),1500)}}
 function leave(){
  if(M&&M.me===M.host&&M.ph!=='lobby'){if(confirm('Spiel für alle beenden und zurück zur Lobby?'))mx('end')}
- else if(confirm('Raum verlassen? Mit dem Raumcode kommst du wieder hinein.'))home()}
+ else if(confirm('Willst du den Raum wirklich verlassen? Mit dem Raumcode kommst du wieder hinein.'))home()}
 const qrImg=u=>{try{if(typeof qrcode!=='function')return '';const q=qrcode(0,'M');q.addData(u);q.make();return `<div class="c" style="margin:8px 0"><img alt="QR-Code zum Beitreten" src="${q.createDataURL(5,2)}" style="width:190px;height:190px;image-rendering:pixelated;border-radius:8px"></div>`}catch(e){return ''}};
 function kick(id){const p=M.players.find(x=>x.id===id);if(p&&confirm(p.name+' aus dem Raum entfernen?'))mx('kick',{id})}
 function share(){const u=location.origin+location.pathname+'?raum='+myCode;

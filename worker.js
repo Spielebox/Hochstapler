@@ -1,5 +1,5 @@
 // Hochstapler: Cloudflare Worker + Durable Object (Klasse Room, Binding ROOMS, Secret PASSWORT)
-const WV = '6.11.-16';
+const WV = '6.11.-18';
 const H = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'content-type': 'application/json' };
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: H });
 const CATS=[
@@ -49,6 +49,21 @@ export default {
       return J({ token: await tok(env) });
     }
     if (u.pathname === '/api/check') return u.searchParams.get('token') === await tok(env) ? J({ ok: 1 }) : J({ e: 'x' }, 401);
+    if (u.pathname === '/api/draw' || u.pathname === '/api/wordstat' || u.pathname === '/api/wordreset') {
+      const b = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
+      if ((b.token || u.searchParams.get('token')) !== await tok(env)) return J({ e: 'login' }, 401);
+      const W = env.ROOMS.get(env.ROOMS.idFromName('WORDS'));
+      if (u.pathname === '/api/wordstat') return W.fetch('https://do/stat');
+      if (u.pathname === '/api/wordreset') return W.fetch('https://do/reset');
+      const cats = (Array.isArray(b.cats) ? b.cats : []).filter(x => CATS.some(c => c.id === x));
+      const lv = (Array.isArray(b.lv) ? b.lv : []).filter(x => LV.includes(x));
+      const pool = poolOf({ cats, lv });
+      if (!pool.length) return J({ e: 'leer' }, 400);
+      const r = await W.fetch('https://do/draw', { method: 'POST', body: JSON.stringify({ pool }) });
+      const { w } = await r.json();
+      const ct = catOf(w);
+      return J({ w, c: ct ? ct.id : null });
+    }
     if (u.pathname === '/api/create') {
       const b = await req.json().catch(() => ({}));
       if (b.token !== await tok(env)) return J({ e: 'login' }, 401);
@@ -85,6 +100,7 @@ export class Room {
       await this.st.storage.put('U', U);
       return J({ w });
     }
+    if (u.pathname === '/stat') { const U = (await this.st.storage.get('U')) || []; return J({ n: U.length }); }
     if (u.pathname === '/reset') { await this.st.storage.put('U', []); return J({ ok: 1 }); }
     await this.load();
     if (u.pathname === '/init') {
@@ -173,14 +189,29 @@ export class Room {
   }
 
   judge() {
-    const S = this.S, g = S.G.imp[S.G.gi];
-    return g !== S.host ? S.host : S.players.find(p => p.id !== g).id;
+    const S = this.S, g = S.G.imp[S.G.gi], on = p => this.ws.has(p.id);
+    // Bevorzugt der Host (wenn er nicht selbst rät), sonst der erste andere Spieler; nicht verbundene werden übersprungen
+    const host = S.players.find(p => p.id === S.host && p.id !== g && on(p));
+    return (host || S.players.find(p => p.id !== g && on(p)) || S.players.find(p => p.id !== g)).id;
   }
 
   async act(pid, m) {
     const S = this.S, G = S.G, H0 = pid === S.host, c = S.cfg, ph = S.ph;
     if (ph === 'lobby') {
       if (!H0) return;
+      if (m.t === 'setcfg' && m.cfg && typeof m.cfg === 'object') {
+        const n = m.cfg, ok = (v, a, b) => Number.isInteger(v) && v >= a && v <= b;
+        if (['blitz', 'turnier'].includes(n.type)) c.type = n.type;
+        if (['bekannt', 'geheim'].includes(n.mode)) c.mode = n.mode;
+        if (ok(n.rounds, 1, 20)) c.rounds = n.rounds;
+        if (ok(n.k, 1, 20)) c.k = n.k;
+        if (n.maxSet && ok(n.max, 2, 20)) { c.max = n.max; c.maxSet = true; }
+        if ([0, 1, 2, 3, 5].includes(n.timer)) c.timer = n.timer;
+        if (['cat', 'none'].includes(n.hint)) c.hint = n.hint;
+        if (Array.isArray(n.cats)) c.cats = CATS.map(x => x.id).filter(x => n.cats.includes(x));
+        if (Array.isArray(n.lv)) { const l = LV.filter(x => n.lv.includes(x)); if (l.length) c.lv = l; }
+        this.clamp();
+      }
       if (m.t === 'cfg') {
         if (m.k === 'type' || m.k === 'mode') { if (['blitz', 'turnier', 'bekannt', 'geheim'].includes(m.v)) c[m.k] = m.v; }
         else if (['k', 'max', 'rounds'].includes(m.k)) { c[m.k] += m.d > 0 ? 1 : -1; if (m.k === 'max') c.maxSet = true; }
