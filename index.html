@@ -57,7 +57,7 @@ ol.ord{list-style:none;padding:0;margin:8px 0;counter-reset:o}
 .ord li:first-child{font-weight:600}.ord li:first-child::before{background:var(--brass);color:var(--felt);font-style:normal;font-weight:600}
 .ord li i{font:italic 15px Baskerville,"Palatino Linotype",Georgia,serif;font-weight:400;color:var(--mut)}
 .wn{font-family:"Didot","Bodoni 72","Bodoni MT","Playfair Display","Iowan Old Style",Georgia,serif;color:var(--brass);font-size:22px;letter-spacing:.08em;text-transform:uppercase;margin:4px 0 8px;line-height:1.2}
-section>b:first-child{display:block;margin-bottom:8px;font:400 15px "Didot","Bodoni 72","Bodoni MT","Playfair Display","Iowan Old Style",Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+section>b:first-child{display:block;margin-bottom:8px;font:700 15px "Didot","Bodoni 72","Bodoni MT","Playfair Display","Iowan Old Style",Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
 p.s{font-size:14.5px;line-height:1.4;text-align:center;margin:6px 0 14px}
 h1.t.m{font-size:26px;letter-spacing:.1em;margin-top:18px}
 .sub{font-family:"Baskerville","Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Noto Serif",serif;font-style:italic;font-size:19px;letter-spacing:.02em;color:var(--mut);text-align:center;margin:4px 0 14px}
@@ -138,7 +138,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-35';
+const VERSION='6.11.-36';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
