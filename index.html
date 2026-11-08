@@ -41,7 +41,8 @@ body{min-height:100vh;min-height:100dvh;background-image:repeating-linear-gradie
 .back{position:absolute;inset:0;border-radius:16px;background:var(--ivory);-webkit-backface-visibility:hidden;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .back::before{content:"";position:absolute;inset:12px;border-radius:8px;border:2px solid var(--brass);background:repeating-linear-gradient(45deg,rgba(217,164,65,.13) 0 1px,transparent 1px 22px),repeating-linear-gradient(-45deg,rgba(217,164,65,.13) 0 1px,transparent 1px 22px),#10162b}
 .back::after{content:"";position:absolute;inset:19px;border-radius:5px;border:1px solid rgba(217,164,65,.6)}
-.back img,.back i{position:relative;z-index:1}
+.back img,.back i{position:relative;z-index:1;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.back{transition:opacity 0s linear .3s,visibility 0s linear .3s}.flip.on .back{opacity:0;visibility:hidden}
 .back img{width:140px}
 .back i{font:italic 19px Baskerville,"Baskerville Old Face",Palatino,Georgia,serif;color:var(--brass);margin-top:22px}
 .qrw{overflow:hidden;max-height:230px;opacity:1;transition:max-height .45s ease,opacity .35s ease}
@@ -127,7 +128,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-26';
+const VERSION='6.11.-27';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
