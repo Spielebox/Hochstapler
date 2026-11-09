@@ -160,7 +160,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.11.-48';
+const VERSION='6.11.-49';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -249,14 +249,13 @@ function drawLocal(){
  const r=p[Math.random()*p.length|0];U.push(r.w);
  try{localStorage.setItem('hs_used',JSON.stringify(U))}catch(e){}
  return r}
-function catIntro(){const s=C.cats;show(`<h2>Kategorien dieser Runde</h2><p class="mut">Das Wort stammt aus einer dieser Kategorien.</p>${catGrid(CATS.filter(c=>s.includes(c.id)),s)}<button class="p" style="margin-top:14px" onclick="hand(0,'role')">Weiter</button>`)}
 function start(){SC={};C.names.forEach(x=>SC[x]=0);RN=1;newRound()}
 async function newRound(){
  inGame=true;
  const P=C.names,k=C.mode==='geheim'?1+(Math.random()*C.max|0):C.k;
  const r=await drawWord();
  G={k,imp:shuffle(P).slice(0,k),word:r.w,cat:r.c,votes:{},guess:{},start:P[Math.random()*P.length|0]};
- catIntro();
+ hand(0,'role');
 }
 function hand(i,ph){
  const P=C.names;
@@ -320,7 +319,7 @@ function result2(){
  const W=allLost?V:I.filter(h=>won[h]),last=turn&&RN>=C.rounds,S=[...P].sort((a,b)=>SC[b]-SC[a]);
  show(`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(G.word)}</div><div class="c">${catLine(G.cat)}</div>
  <section class="c"><div class="wn">${allLost?'Die Mitspieler gewinnen':W.length>1?'Es gewinnen die Hochstapler':'Es gewinnt der Hochstapler'}</div><p>${W.map(esc).join(', ')}</p></section>
- ${turn?`<section><b>${last?'Endstand':`Stand nach Runde ${RN} von ${C.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(x=>`<tr><td>${last&&x===S[0]?'🥇 ':''}${esc(x)}${I.includes(x)?' 🎭':''}</td><td class="n ${d[x]<0?'r':d[x]>0?'g':''}">${d[x]>0?'+':''}${d[x]}</td><td class="n"><b>${SC[x]}</b></td></tr>`).join('')}</table></section>`:''}
+ ${turn?`<section><b>${last?'Endstand':`Stand nach Runde ${RN} von ${C.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(x=>`<tr><td>${last&&SC[x]===SC[S[0]]?'🥇 ':''}${esc(x)}${I.includes(x)?' 🎭':''}</td><td class="n ${d[x]<0?'r':d[x]>0?'g':''}">${d[x]>0?'+':''}${d[x]}</td><td class="n"><b>${SC[x]}</b></td></tr>`).join('')}</table></section>`:''}
  ${turn?(last?'<button class="p" onclick="setup()">Neues Spiel</button>':'<button class="p" onclick="RN++;newRound()">Nächste Runde</button>'):'<button class="p" onclick="newRound()">Noch eine Runde</button>'}`);
 }
 /* Multiplayer */
@@ -430,7 +429,7 @@ function mp(keep){
  }else if(m.ph==='result'){const R=m.res,turn=c.type==='turnier',S=[...P].sort((a,z)=>z.sc-a.sc);
   h=`<p class="c mut" style="margin-top:12px">Das Wort war</p><div class="big" style="margin-top:0">${esc(R.word)}</div>${R.cat?`<div class="c">${catLine(R.cat)}</div>`:''}
   <section class="c"><div class="wn">${R.allLost?'Die Mitspieler gewinnen':R.W.length>1?'Es gewinnen die Hochstapler':'Es gewinnt der Hochstapler'}</div><p>${R.W.map(nm).join(', ')}</p></section>`
-  +(turn?`<section><b>${R.last?'Endstand':`Stand nach Runde ${m.round} von ${c.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(p=>`<tr><td>${R.last&&p===S[0]?'🥇 ':''}${esc(p.name)}${m.rev.imp.includes(p.id)?' 🎭':''}</td><td class="n ${R.d[p.id]<0?'r':R.d[p.id]>0?'g':''}">${R.d[p.id]>0?'+':''}${R.d[p.id]}</td><td class="n"><b>${p.sc}</b></td></tr>`).join('')}</table></section>`:'')
+  +(turn?`<section><b>${R.last?'Endstand':`Stand nach Runde ${m.round} von ${c.rounds}`}</b><table><tr><th>Spieler</th><th class="n">Runde</th><th class="n">Gesamt</th></tr>${S.map(p=>`<tr><td>${R.last&&p.sc===S[0].sc?'🥇 ':''}${esc(p.name)}${m.rev.imp.includes(p.id)?' 🎭':''}</td><td class="n ${R.d[p.id]<0?'r':R.d[p.id]>0?'g':''}">${R.d[p.id]>0?'+':''}${R.d[p.id]}</td><td class="n"><b>${p.sc}</b></td></tr>`).join('')}</table></section>`:'')
   +(H?`<button class="p" onclick="mx('next')">${R.last?'Zurück zur Lobby':turn?'Nächste Runde':'Noch eine Runde'}</button>`:`<p class="c mut">Das Spiel geht weiter.</p>`);
  }
  show('<div class="bar"><button class="x" aria-label="Raum verlassen" onclick="leave()">✕</button><button class="x" aria-label="Regeln" onclick="rules(\'mpBack\')">?</button></div>'+h+off,keep||!fresh);tick();
