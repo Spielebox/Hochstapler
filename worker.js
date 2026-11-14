@@ -1,5 +1,5 @@
-// Hochstapler: Cloudflare Worker + Durable Object (Klasse Room, Binding ROOMS, Secret PASSWORT)
-const WV = '6.11.-18';
+// Hochstapler und Kunstfälscher: Cloudflare Worker + Durable Object (Klasse Room, Binding ROOMS, Secret PASSWORT)
+const WV = '6.12.1';
 const H = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'content-type': 'application/json' };
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: H });
 const CATS=[
@@ -25,6 +25,7 @@ const CATS=[
 {id:"werkzeug",n:"Werkzeug & Handwerk",e:"🔨",w:[["Hammer", "Säge", "Zange", "Schraubenzieher", "Schraube", "Bohrer", "Schaufel", "Leiter", "Axt", "Pinsel", "Farbe", "Zollstock", "Feile", "Hobel", "Schleifpapier", "Spaten", "Werkbank", "Wasserwaage", "Gartenschere", "Werkzeugkasten", "Blechschere", "Schraubendreher", "Gartenschlauch", "Gießkanne", "Harke", "Sägeblatt", "Holzleim", "Rasenmäher", "Schleifklotz", "Taschenmesser"],["Akkuschrauber", "Stichsäge", "Bohrmaschine", "Schraubenschlüssel", "Meißel", "Winkelschleifer", "Kreissäge", "Heißklebepistole", "Maßband", "Spachtel", "Farbroller", "Kelle", "Hacke", "Rechen", "Schweißgerät", "Dübel", "Schraubstock", "Nietzange", "Amboss", "Spitzhacke", "Gabelschlüssel", "Ringschlüssel", "Inbusschlüssel", "Seitenschneider", "Kombizange", "Handsäge", "Cuttermesser", "Gummihammer", "Steckschlüssel", "Feinsäge"],["Drechselbank", "Stemmeisen", "Fuchsschwanz", "Gliedermaßstab", "Lötkolben", "Rohrzange", "Gewindeschneider", "Richtscheit", "Senkblei", "Ahle", "Gehrungslade", "Schweißbrenner", "Schmiedehammer", "Töpferscheibe", "Webstuhl", "Nähmaschine", "Bandsäge", "Schlagbohrer", "Oberfräse", "Flachzange", "Fugenkelle", "Glättkelle", "Reibebrett", "Zahnspachtel", "Metallsäge", "Bolzenschneider", "Schraubzwinge", "Handbohrer", "Anreißnadel", "Kantenhobel"]]},
 {id:"wetter",n:"Wetter & Jahreszeiten",e:"🌈",w:[["Sonne", "Regen", "Schnee", "Wind", "Wolke", "Gewitter", "Blitz", "Donner", "Nebel", "Hagel", "Regenbogen", "Frühling", "Sommer", "Herbst", "Winter", "Schneemann", "Hitze", "Kälte", "Regenschirm", "Pfütze", "Frost", "Tau", "Schauer", "Schneeball", "Sonnenstrahl", "Wolkenbruch", "Temperatur", "Himmel", "Regentropfen", "Windböe"],["Sturm", "Orkan", "Tornado", "Hurrikan", "Dürre", "Hochwasser", "Überschwemmung", "Lawine", "Glatteis", "Schneeflocke", "Eiszapfen", "Raureif", "Morgentau", "Windstille", "Sonnenschein", "Dämmerung", "Sonnenaufgang", "Sonnenuntergang", "Polarlicht", "Schneesturm", "Monsun", "Taifun", "Blizzard", "Dunst", "Smog", "Schwüle", "Wetterleuchten", "Eisregen", "Windhose", "Schneefall"],["Sonnenfinsternis", "Mondfinsternis", "Tagundnachtgleiche", "Hitzewelle", "Kaltfront", "Hochdruckgebiet", "Tiefdruckgebiet", "Luftfeuchtigkeit", "Taupunkt", "Wetterfahne", "Wetterfrosch", "Barometer", "Windstärke", "Nieselregen", "Platzregen", "Graupel", "Schneeregen", "Altweibersommer", "Eisheilige", "Wetterbericht", "Jetstream", "Passatwind", "Kugelblitz", "Hygrometer", "Niederschlag", "Isobare", "Wetterstation", "Mistral", "Bora", "Wetterkarte"]]}
 ];
+const FW = ["Haus", "Leuchtturm", "Schloss", "Kirche", "Brücke", "Windmühle", "Iglu", "Zelt", "Burg", "Pyramide", "Eiffelturm", "Hochhaus", "Bauernhof", "Scheune", "Tunnel", "Brunnen", "Pagode", "Stadion", "Bahnhof", "Hütte", "Baumhaus", "Zirkuszelt", "Riesenrad", "Tankstelle", "Kran", "Freiheitsstatue", "Schiefer Turm", "Hundehütte", "Vogelhaus", "Bienenstock", "Gartenzaun", "Schornstein", "Treppe", "Hängebrücke", "Seilbahn", "Strandkorb", "Sandburg", "Wasserturm", "Ampel", "Strommast", "Fahrrad", "Auto", "Schiff", "Flugzeug", "Zug", "Hubschrauber", "Rakete", "Segelboot", "Traktor", "Bagger", "Motorrad", "Heißluftballon", "U-Boot", "Kutsche", "Schlitten", "Dampflok", "Bus", "Feuerwehrauto", "Roller", "Floß", "Wohnwagen", "Zeppelin", "Raumschiff", "Schlauchboot", "Dreirad", "Kinderwagen", "Rennwagen", "Lastwagen", "Fallschirm", "Fähre", "Giraffe", "Elefant", "Schmetterling", "Schnecke", "Krokodil", "Pinguin", "Igel", "Eule", "Hase", "Fisch", "Hai", "Schildkröte", "Krake", "Spinne", "Pferd", "Hund", "Katze", "Schwan", "Pfau", "Känguru", "Nashorn", "Flamingo", "Delfin", "Frosch", "Marienkäfer", "Biene", "Fledermaus", "Wal", "Hahn", "Kamel", "Seepferdchen", "Eichhörnchen", "Papagei", "Ente", "Zebra", "Dinosaurier", "Drache", "Einhorn", "Seestern", "Qualle", "Libelle", "Skorpion", "Storch", "Krebs", "Maus", "Esel", "Schaf", "Kuh", "Schwein", "Bär", "Fuchs", "Löwe", "Affe", "Hirsch", "Wolf", "Nilpferd", "Gans", "Raupe", "Ameise", "Baum", "Blume", "Berg", "Vulkan", "Sonne", "Mond", "Regenbogen", "Wolke", "Sonnenblume", "Kaktus", "Palme", "Tannenbaum", "Pilz", "Wasserfall", "Insel", "Stern", "Schneemann", "Tulpe", "Blitz", "Welle", "Höhle", "Lagerfeuer", "Gletscher", "Düne", "Rose", "Tropfen", "Schneeflocke", "Kleeblatt", "Ahornblatt", "Eichel", "Tannenzapfen", "Gänseblümchen", "Korallenriff", "Oase", "Regenschirm", "Schlüssel", "Brille", "Uhr", "Kerze", "Lampe", "Stuhl", "Sofa", "Bett", "Tisch", "Schere", "Hammer", "Säge", "Gießkanne", "Leiter", "Anker", "Kompass", "Fernglas", "Lupe", "Glühbirne", "Telefon", "Kamera", "Gitarre", "Klavier", "Geige", "Trompete", "Trommel", "Krone", "Zauberhut", "Schatztruhe", "Schwert", "Schild", "Bogen", "Fahne", "Briefkasten", "Laterne", "Teekanne", "Tasse", "Flasche", "Eimer", "Besen", "Rucksack", "Koffer", "Handtasche", "Stiefel", "Krawatte", "Mütze", "Handschuh", "Zahnbürste", "Kamm", "Spiegel", "Wecker", "Sanduhr", "Globus", "Buch", "Bleistift", "Fernseher", "Computer", "Waschmaschine", "Kühlschrank", "Toaster", "Badewanne", "Tür", "Fenster", "Schubkarre", "Rasenmäher", "Sonnenschirm", "Liegestuhl", "Hängematte", "Zahnrad", "Satellit", "Handy", "Staubsauger", "Hantel", "Saxofon", "Kronleuchter", "Vase", "Pinsel", "Staffelei", "Schaukelstuhl", "Bügeleisen", "Nähmaschine", "Schreibmaschine", "Mikroskop", "Teleskop", "Waage", "Zirkel", "Spritze", "Handschellen", "Schaufel", "Axt", "Pfeil", "Kanone", "Kuchen", "Torte", "Eistüte", "Pizza", "Brezel", "Apfel", "Birne", "Banane", "Erdbeere", "Kirsche", "Traube", "Ananas", "Karotte", "Zwiebel", "Hamburger", "Spiegelei", "Brot", "Käse", "Lebkuchenhaus", "Weihnachtsbaum", "Kürbis", "Wassermelone", "Zitrone", "Tomate", "Brokkoli", "Maiskolben", "Croissant", "Donut", "Lutscher", "Hot Dog", "Kaffeetasse", "Weinglas", "Eierbecher", "Fußball", "Skateboard", "Schaukel", "Rutsche", "Dartscheibe", "Schachbrett", "Würfel", "Angel", "Drachen", "Jojo", "Trampolin", "Surfbrett", "Ski", "Tennisschläger", "Basketballkorb", "Bowlingkugel", "Fahrradhelm", "Schlittschuh", "Fußballtor", "Pokal", "Medaille", "Hula-Hoop-Reifen", "Roboter", "Astronaut", "Pirat", "Ritter", "Hexe", "Clown", "Vogelscheuche", "Meerjungfrau", "Zauberer", "Gespenst", "Außerirdischer", "Weihnachtsmann", "Koch", "Indianer", "Cowboy", "Prinzessin", "Feuerwehrmann", "Taucher", "Skelett", "Piratenschiff", "Totenkopf", "Schatzkarte", "Zauberstab", "Kürbislaterne", "Geschenk", "Luftballon", "Feuerwerk", "Hufeisen", "Marionette", "Schneekugel", "Mumie", "Fernsehturm", "Gewächshaus", "Segel", "Ruder", "Rettungsring", "Leuchtfeuer", "Kamin", "Kerzenständer", "Windspiel", "Windrad", "Vogelkäfig", "Aquarium", "Sprungbrett", "Schaufelbagger", "Dudelsack", "Akkordeon", "Harfe", "Flügel", "Mundharmonika", "Notenschlüssel", "Zapfsäule", "Parkuhr", "Wetterhahn", "Spielzeugeisenbahn", "Zange", "Nagel", "Schraube", "Seil", "Netz", "Mausefalle"];
 const LV = ['leicht', 'mittel', 'schwer'];
 const poolOf = c => CATS.filter(x => c.cats.includes(x.id)).flatMap(x => x.w.flatMap((l, i) => c.lv.includes(LV[i]) ? l : []));
 const catOf = w => CATS.find(x => x.w.some(l => l.includes(w)));
@@ -52,9 +53,11 @@ export default {
     if (u.pathname === '/api/draw' || u.pathname === '/api/wordstat' || u.pathname === '/api/wordreset') {
       const b = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
       if ((b.token || u.searchParams.get('token')) !== await tok(env)) return J({ e: 'login' }, 401);
-      const W = env.ROOMS.get(env.ROOMS.idFromName('WORDS'));
-      if (u.pathname === '/api/wordstat') return W.fetch('https://do/stat');
-      if (u.pathname === '/api/wordreset') return W.fetch('https://do/reset');
+      const isF = b.game === 'f' || u.searchParams.get('game') === 'f';
+      const W = env.ROOMS.get(env.ROOMS.idFromName(isF ? 'WORDS_F' : 'WORDS'));
+      if (u.pathname === '/api/wordstat') { const j = await (await W.fetch('https://do/stat')).json(); return J(isF ? { ...j, g: 'f' } : j); }
+      if (u.pathname === '/api/wordreset') { await W.fetch('https://do/reset'); return J(isF ? { ok: 1, g: 'f' } : { ok: 1 }); }
+      if (isF) { const r = await W.fetch('https://do/draw', { method: 'POST', body: JSON.stringify({ pool: FW }) }); const { w } = await r.json(); return J({ w, g: 'f' }); }
       const cats = (Array.isArray(b.cats) ? b.cats : []).filter(x => CATS.some(c => c.id === x));
       const lv = (Array.isArray(b.lv) ? b.lv : []).filter(x => LV.includes(x));
       const pool = poolOf({ cats, lv });
@@ -67,12 +70,18 @@ export default {
     if (u.pathname === '/api/create') {
       const b = await req.json().catch(() => ({}));
       if (b.token !== await tok(env)) return J({ e: 'login' }, 401);
+      const game = b.game === 'f' ? 'f' : 'h';
       for (let i = 0; i < 8; i++) {
         const code = Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[Math.random() * 24 | 0]).join('');
-        const r = await env.ROOMS.get(env.ROOMS.idFromName(code)).fetch('https://do/init?code=' + code, { method: 'POST' });
-        if (r.ok) return J({ code });
+        const r = await env.ROOMS.get(env.ROOMS.idFromName(code)).fetch('https://do/init?code=' + code + '&game=' + game, { method: 'POST' });
+        if (r.ok) return J({ code, g: game });
       }
       return J({ e: 'voll' }, 500);
+    }
+    if (u.pathname === '/api/room') {
+      const code = (u.searchParams.get('code') || '').toUpperCase().replace(/[^A-Z]/g, '');
+      if (code.length !== 4) return J({ e: 'x' }, 400);
+      return env.ROOMS.get(env.ROOMS.idFromName(code)).fetch('https://do/info');
     }
     if (u.pathname === '/ws') {
       if (req.headers.get('Upgrade') !== 'websocket') return new Response('WebSocket nötig', { status: 400 });
@@ -85,7 +94,9 @@ export default {
 
 export class Room {
   constructor(st, env) { this.st = st; this.env = env; this.S = null; this.ws = new Map(); this.q = Promise.resolve(); }
-  async load() { if (!this.S) { this.S = (await this.st.storage.get('S')) || null; if (this.S) { const c = this.S.cfg; if (!c.cats) c.cats = CATS.map(x => x.id); if (!Array.isArray(c.lv)) c.lv = LV.includes(c.lv) ? [c.lv] : [...LV]; if (!c.hint) c.hint = 'cat'; } } }
+  async load() { if (!this.S) { this.S = (await this.st.storage.get('S')) || null; if (this.S) { const c = this.S.cfg; if (!c.cats) c.cats = CATS.map(x => x.id); if (!Array.isArray(c.lv)) c.lv = LV.includes(c.lv) ? [c.lv] : [...LV]; if (!c.hint) c.hint = 'cat'; if (!c.game) c.game = 'h'; this.fixCols(); } } }
+  fixCols() { const used = new Set(); this.S.players.forEach(p => { if (Number.isInteger(p.col) && p.col >= 0 && !used.has(p.col)) used.add(p.col); else p.col = -1; }); this.S.players.forEach(p => { if (p.col < 0) { let i = 0; while (used.has(i)) i++; p.col = i; used.add(i); } }); }
+  freeCol() { const used = new Set(this.S.players.map(p => p.col)); let i = 0; while (used.has(i)) i++; return i; }
   async save() { await this.st.storage.put('S', this.S); }
 
   async fetch(req) {
@@ -103,9 +114,10 @@ export class Room {
     if (u.pathname === '/stat') { const U = (await this.st.storage.get('U')) || []; return J({ n: U.length }); }
     if (u.pathname === '/reset') { await this.st.storage.put('U', []); return J({ ok: 1 }); }
     await this.load();
+    if (u.pathname === '/info') return this.S ? J({ g: this.S.cfg.game || 'h' }) : J({ e: 'x' }, 404);
     if (u.pathname === '/init') {
       if (this.S) return new Response('x', { status: 409 });
-      this.S = { code: u.searchParams.get('code'), players: [], host: null, ph: 'lobby', cfg: { type: 'blitz', rounds: 5, mode: 'bekannt', k: 1, max: 2, timer: 0, cats: CATS.map(x => x.id), lv: [...LV], hint: 'cat' }, round: 0, G: null };
+      this.S = { code: u.searchParams.get('code'), players: [], host: null, ph: 'lobby', cfg: { type: 'blitz', rounds: 5, mode: 'bekannt', k: 1, max: 2, timer: 0, cats: CATS.map(x => x.id), lv: [...LV], hint: 'cat', game: u.searchParams.get('game') === 'f' ? 'f' : 'h' }, round: 0, G: null };
       await this.save();
       return new Response('ok');
     }
@@ -124,8 +136,8 @@ export class Room {
           const name = String(m.name || '').trim().slice(0, 14);
           if (S.ph !== 'lobby') return err('Das Spiel läuft schon.');
           if (!name || S.players.some(x => x.name === name)) return err('Dieser Name ist ungültig oder schon vergeben.');
-          if (S.players.length >= 20) return err('Der Raum ist voll.');
-          p = { id: crypto.randomUUID().slice(0, 8), name, sc: 0 };
+          if (S.players.length >= (S.cfg.game === 'f' ? 12 : 20)) return err('Der Raum ist voll.');
+          p = { id: crypto.randomUUID().slice(0, 8), name, sc: 0, col: this.freeCol() };
           S.players.push(p);
           if (!S.host) S.host = p.id;
           this.clamp();
@@ -153,10 +165,11 @@ export class Room {
   async newRound() {
     const S = this.S, c = S.cfg, P = S.players.map(p => p.id);
     const k = c.mode === 'geheim' ? 1 + (Math.random() * c.max | 0) : c.k;
-    const r = await this.env.ROOMS.get(this.env.ROOMS.idFromName('WORDS')).fetch('https://do/draw', { method: 'POST', body: JSON.stringify({ pool: poolOf(c) }) });
+    const fk = c.game === 'f';
+    const r = await this.env.ROOMS.get(this.env.ROOMS.idFromName(fk ? 'WORDS_F' : 'WORDS')).fetch('https://do/draw', { method: 'POST', body: JSON.stringify({ pool: fk ? FW : poolOf(c) }) });
     const word = (await r.json()).w;
     S.round++; S.ph = 'role';
-    S.G = { k, imp: sh(P).slice(0, k), word, cat: catOf(word).id, votes: {}, guess: {}, seen: [], start: P[Math.random() * P.length | 0], gi: 0 };
+    S.G = { k, imp: sh(P).slice(0, k), word, cat: fk ? null : catOf(word).id, votes: {}, guess: {}, seen: [], start: P[Math.random() * P.length | 0], gi: 0 };
   }
 
   reveal() {
@@ -197,6 +210,11 @@ export class Room {
 
   async act(pid, m) {
     const S = this.S, G = S.G, H0 = pid === S.host, c = S.cfg, ph = S.ph;
+    if (ph === 'lobby' && m.t === 'color') {
+      const me = S.players.find(p => p.id === pid), ci = m.c;
+      if (me && Number.isInteger(ci) && ci >= 0 && ci < 12) { const o = S.players.find(p => p.id !== pid && p.col === ci); if (o) o.col = me.col; me.col = ci; }
+      return;
+    }
     if (ph === 'lobby') {
       if (!H0) return;
       if (m.t === 'setcfg' && m.cfg && typeof m.cfg === 'object') {
@@ -223,7 +241,7 @@ export class Room {
         this.clamp();
       }
       if (m.t === 'resetwords') {
-        await this.env.ROOMS.get(this.env.ROOMS.idFromName('WORDS')).fetch('https://do/reset', { method: 'POST' });
+        await this.env.ROOMS.get(this.env.ROOMS.idFromName(c.game === 'f' ? 'WORDS_F' : 'WORDS')).fetch('https://do/reset', { method: 'POST' });
         const sk = this.ws.get(pid); if (sk) { try { sk.send(JSON.stringify({ t: 'note', e: 'Das Wortgedächtnis wurde zurückgesetzt.' })); } catch (e) {} }
       }
       if (m.t === 'kick') {
@@ -235,7 +253,7 @@ export class Room {
           this.clamp();
         }
       }
-      if (m.t === 'start' && c.cats.length && S.players.length >= (c.mode === 'geheim' ? 5 : 4)) { S.players.forEach(p => p.sc = 0); S.round = 0; await this.newRound(); }
+      if (m.t === 'start' && (c.game === 'f' || c.cats.length) && S.players.length >= (c.mode === 'geheim' ? 5 : 4)) { S.players.forEach(p => p.sc = 0); S.round = 0; await this.newRound(); }
       return;
     }
     if (m.t === 'end' && H0) { S.ph = 'lobby'; S.G = null; return; }
@@ -265,7 +283,7 @@ export class Room {
 
   view(me) {
     const S = this.S, G = S.G;
-    const v = { t: 's', wv: WV, now: Date.now(), me, code: S.code, host: S.host, ph: S.ph, cfg: S.cfg, round: S.round, players: S.players.map(p => ({ id: p.id, name: p.name, sc: p.sc, on: this.ws.has(p.id) })) };
+    const v = { t: 's', wv: WV, now: Date.now(), me, code: S.code, host: S.host, ph: S.ph, cfg: S.cfg, round: S.round, players: S.players.map(p => ({ id: p.id, name: p.name, sc: p.sc, col: p.col, on: this.ws.has(p.id) })) };
     if (!G) return v;
     const late = ['reveal', 'guess', 'result'].includes(S.ph);
     v.k = (S.cfg.mode === 'bekannt' || late) ? G.k : null;
