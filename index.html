@@ -146,6 +146,16 @@ html[data-g=f] .pk{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;marg
 html[data-g=f] .pk button{width:100%;height:auto;aspect-ratio:1;padding:0;margin:0;font:700 15px system-ui;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.75);box-shadow:none}
 html[data-g=f] .pk button.sel{outline:3px solid #2a2a44;outline-offset:1px}
 html[data-g=f] .face .ic.pic{width:104px;height:104px;margin:-4px auto 0;background-size:contain;background-repeat:no-repeat;background-position:center}
+@media (min-width:700px) and (min-height:600px){
+#app:has(.w2m){max-width:1060px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);column-gap:44px;align-items:start}
+#app:has(.w2m)>.bar,#app:has(.w2m)>.logo,#app:has(.w2m)>h1,#app:has(.w2m)>.sub,#app:has(.w2m)>.code,#app:has(.w2m)>.qrw,#app:has(.w2m)>.row,#app:has(.w2m)>button,#app:has(.w2m)>p{grid-column:1/-1}
+#app:has(.w2m)>.wl{grid-column:1;position:sticky;top:10px}
+#app:has(.w2m)>.wr{grid-column:2}
+#app:has(.w2m)>.wl>section:first-child,#app:has(.w2m)>.wr>section:first-child{margin-top:12px}
+#app:has(.w2m) .grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+#app:has(.w2m) .cat{min-height:112px;font-size:14px}
+}
+.w2m{display:none}
 </style>
 </head>
 <body>
@@ -267,17 +277,17 @@ function setupF(keep){
  C.max=Math.min(Math.max(C.max,2),Math.max(2,lim));
  const rows=C.names.map((x,i)=>`<div class="pr"><button class="sq" aria-label="Farbe ändern" style="background-image:var(--b${C.col[x]})" onclick="cpOpen(${i})"></button><span class="pnm">${esc(x)} <i class="cn">${PC[C.col[x]][0]}</i></span><button aria-label="Entfernen" onclick="rm(${i})">✕</button></div>`
   +(CPK===i?`<div class="pk">${PC.map((p,ci)=>{const o=C.names.find(z=>C.col[z]===ci);return `<button class="${C.col[x]===ci?'sel':''}" style="background-image:var(--b${ci})" aria-label="${p[0]}" onclick="cpSet(${i},${ci})">${o&&o!==x?esc([...o][0]):''}</button>`}).join('')}</div>`:'')).join('');
- show(`<div class="bar"><button class="x" aria-label="Zurück" onclick="home()">←</button><button class="x" aria-label="Regeln" onclick="rules('setup')">?</button></div>${LOGOF.replace('logo big','logo mid')}<h1 class="t">Kunstfälscher</h1><p class="sub">Ein Handy, das reihum geht</p>
- <section><b>Spieler (${n})</b>${rows}
+ show(`<i class="w2m"></i><div class="bar"><button class="x" aria-label="Zurück" onclick="home()">←</button><button class="x" aria-label="Regeln" onclick="rules('setup')">?</button></div>${LOGOF.replace('logo big','logo mid')}<h1 class="t">Kunstfälscher</h1><p class="sub">Ein Handy, das reihum geht</p>
+ <div class="wl"><section><b>Spieler (${n})</b>${rows}
  <div class="row" style="margin-top:8px"><input id="nm" placeholder="Name" maxlength="14" onkeydown="if(event.key==='Enter')add()"><button style="flex:none;width:80px;margin:0" onclick="add()">+</button></div>
  <p class="mut">Mindestens ${minN}, höchstens 12 Spieler. Die Farben werden automatisch vergeben. Tippe auf einen Farbpunkt, um die Farbe zu ändern.</p></section>
  <button class="p" style="margin-top:6px" ${n>=minN?'':'disabled'} onclick="start()">Spiel starten</button>${n>=minN?'':`<p class="mut c">Es fehlen noch ${minN-n} Spieler.</p>`}
  <section><b>Spielart</b>${seg([['blitz','Blitzrunde'],['turnier','Turnier']],C.type,'type')}${C.type==='turnier'?stp('Runden',C.rounds,"chg('rounds',-1)","chg('rounds',1)"):''}</section>
  <section><b>Kunstfälscher</b>${seg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],C.mode,'mode')}
  ${geh?stp('Maximal',C.max,"chg('max',-1)","chg('max',1)")+'<p class="mut">Die echte Anzahl wird zufällig zwischen 1 und dem Maximum gewählt.</p>':stp('Anzahl',C.k,"chg('k',-1)","chg('k',1)")}</section>
- <section><b>Begriffe</b><p class="mut">Gespielt: <span id="wn">${usedN()}</span> von ${FW.length} Begriffen. Gilt für Pass-and-Play und Multiplayer. Kein Begriff kommt doppelt, bis alle gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
+ </div><div class="wr"><section><b>Begriffe</b><p class="mut">Gespielt: <span id="wn">${usedN()}</span> von ${FW.length} Begriffen. Gilt für Pass-and-Play und Multiplayer. Kein Begriff kommt doppelt, bis alle gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
- <button onclick="rules('setup')">Regeln</button>
+ </div><button onclick="rules('setup')">Regeln</button>
  <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);loadWN();
 }
 const LOGOM=()=>GM==='f'?LOGOF.replace('logo big','logo mid'):LOGOMID;
@@ -330,7 +340,7 @@ function tick(){if(!TEND)return;const e=$('tm');if(!e)return;const r=Math.round(
 setInterval(tick,500);
 function quit(){if(confirm('Spiel abbrechen und zurück zum Start?'))setup()}
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const VERSION='6.12.11';
+const VERSION='6.13.0';
 const maxK=n=>Math.max(1,Math.floor((n-1)/2));
 const seg=(o,cur,key)=>`<div class="row seg">${o.map(([v,l])=>`<button class="${v===cur?'on':''}" onclick="set('${key}','${v}')">${l}</button>`).join('')}</div>`;
 const stp=(l,v,dn,up)=>`<div class="row" style="margin-top:10px"><span>${l}</span><div class="row" style="flex:none;width:156px"><button class="step" onclick="${dn}">−</button><b class="c">${v}</b><button class="step" onclick="${up}">+</button></div></div>`;
@@ -346,20 +356,20 @@ function setup(keep){if(GM==='f')return setupF(keep);
  C.k=Math.min(Math.max(C.k,1),lim);
  if(C.maxAuto!==false)C.max=Math.max(2,Math.floor(n/3));
  C.max=Math.min(Math.max(C.max,2),Math.max(2,lim));
- show(`<div class="bar"><button class="x" aria-label="Zurück" onclick="home()">←</button><button class="x" aria-label="Regeln" onclick="rules('setup')">?</button></div>${LOGOMID}<h1 class="t">Hochstapler</h1><p class="sub">Ein Handy, das reihum geht</p>
- <section><b>Spieler (${n})</b><div>${C.names.map((x,i)=>`<span class="chip">${esc(x)} <b onclick="rm(${i})">✕</b></span>`).join('')}</div>
+ show(`<i class="w2m"></i><div class="bar"><button class="x" aria-label="Zurück" onclick="home()">←</button><button class="x" aria-label="Regeln" onclick="rules('setup')">?</button></div>${LOGOMID}<h1 class="t">Hochstapler</h1><p class="sub">Ein Handy, das reihum geht</p>
+ <div class="wl"><section><b>Spieler (${n})</b><div>${C.names.map((x,i)=>`<span class="chip">${esc(x)} <b onclick="rm(${i})">✕</b></span>`).join('')}</div>
  <div class="row" style="margin-top:8px"><input id="nm" placeholder="Name" maxlength="14" onkeydown="if(event.key==='Enter')add()"><button style="flex:none;width:80px;margin:0" onclick="add()">+</button></div>
  <p class="mut">Mindestens ${minN} Spieler</p></section>
  <button class="p" style="margin-top:6px" ${n>=minN&&C.cats.length?'':'disabled'} onclick="start()">Spiel starten</button>${n>=minN&&C.cats.length?'':`<p class="mut c">${n<minN?`Es fehlen noch ${minN-n} Spieler.`:'Wähle mindestens eine Kategorie.'}</p>`}
  <section><b>Spielart</b>${seg([['blitz','Blitzrunde'],['turnier','Turnier']],C.type,'type')}${C.type==='turnier'?stp('Runden',C.rounds,"chg('rounds',-1)","chg('rounds',1)"):''}</section>
  <section><b>Hochstapler</b>${seg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],C.mode,'mode')}
  ${geh?stp('Maximal',C.max,"chg('max',-1)","chg('max',1)")+'<p class="mut">Die echte Anzahl wird zufällig zwischen 1 und dem Maximum gewählt.</p>':stp('Anzahl',C.k,"chg('k',-1)","chg('k',1)")}</section>
- <section><b>Kategorien (${C.cats.length} von ${CATS.length})</b><div class="row seg" style="margin-top:8px"><button onclick="catAll(1)">Alle</button><button onclick="catAll(0)">Keine</button></div>${catGrid(CATS,C.cats,'catTog')}</section>
+ </div><div class="wr"><section><b>Kategorien (${C.cats.length} von ${CATS.length})</b><div class="row seg" style="margin-top:8px"><button onclick="catAll(1)">Alle</button><button onclick="catAll(0)">Keine</button></div>${catGrid(CATS,C.cats,'catTog')}</section>
  <section><b>Schwierigkeit</b>${lvBtns(C.lv,'lvTog')}<p class="mut">Mehrere wählbar. Alle drei ergeben eine Mischung.</p></section>
  <section><b>Hochstapler sieht</b>${seg(Object.entries(HN),C.hint,'hint')}<p class="mut">Die Kategorie des Wortes oder nichts.</p></section>
  <section><b>Wortgedächtnis</b><p class="mut">Gespielt: <span id="wn">${usedN()}</span> von ${TOTAL} Wörtern. Gilt für Pass-and-Play und Multiplayer. Kein Wort kommt doppelt, bis alle der Auswahl gespielt wurden.</p><button onclick="resetUsed()">Zurücksetzen</button></section>
  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${C.timer===v?'on':''}\" onclick="set('timer',${v})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten. Bei Ablauf erscheint nur ein Hinweis.</p></section>
- <button onclick="rules('setup')">Regeln</button>
+ </div><button onclick="rules('setup')">Regeln</button>
  <p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION}</p>`,keep);loadWN();
 }
 
@@ -601,13 +611,13 @@ function mp(keep){
  const fresh=m.ph!==lastPh;if(fresh&&m.ph==='vote')SEL=[];if(m.ph==='role'&&(fresh||m.round!==lastRound)){REVL=false;REVSEEN=false}lastPh=m.ph;lastRound=m.round;
  let h='';
  if(m.ph==='lobby'){
-  h=`${LOGOM()}<div class="code">${m.code}</div><p class="sub" style="margin:0 0 10px">Raumcode</p>${H?`<div id="qrw" class="qrw${QRON?'':' off'}">${qrImg(location.origin+location.pathname+'?raum='+m.code)}</div>`:''}<div class="row">${H?`<button id="qrb" onclick="qrTog()">${QRON?'QR ausblenden':'QR anzeigen'}</button>`:''}<button onclick="share()">${H?'Link teilen':'Einladungslink teilen'}</button></div>
-  <section><b>Spieler (${n})</b>${plList(m,H)}<p class="mut">Mindestens ${minN} Spieler${GM==='f'?', höchstens 12. Tippe auf deinen Farbpunkt, um deine Farbe zu ändern.':''}</p></section>`
+  h=`${H?'<i class="w2m"></i>':''}${LOGOM()}<div class="code">${m.code}</div><p class="sub" style="margin:0 0 10px">Raumcode</p>${H?`<div id="qrw" class="qrw${QRON?'':' off'}">${qrImg(location.origin+location.pathname+'?raum='+m.code)}</div>`:''}<div class="row">${H?`<button id="qrb" onclick="qrTog()">${QRON?'QR ausblenden':'QR anzeigen'}</button>`:''}<button onclick="share()">${H?'Link teilen':'Einladungslink teilen'}</button></div>
+  ${H?'<div class="wl">':''}<section><b>Spieler (${n})</b>${plList(m,H)}<p class="mut">Mindestens ${minN} Spieler${GM==='f'?', höchstens 12. Tippe auf deinen Farbpunkt, um deine Farbe zu ändern.':''}</p></section>`
   +(TEST?`<section><b>Testmodus</b><p class="mut">Weitere Spieler in neuen Tabs öffnen:</p>${[2,3,4,5,6].map(i=>`<a class="chip" target="_blank" rel="noopener" href="${location.origin+location.pathname}?raum=${m.code}&test=1&name=Spieler%20${i}">Spieler ${i}</a>`).join('')}</section>`:'')
   +(H?`<button class="p" style="margin-top:6px" ${okS?'':'disabled'} onclick="mx('start')">Spiel starten</button>${okS?'':`<p class="mut c">${n<minN?`Es fehlen noch ${minN-n} Spieler.`:'Wähle mindestens eine Kategorie.'}</p>`}<section><b>Spielart</b>${cseg([['blitz','Blitzrunde'],['turnier','Turnier']],c.type,'type')}${c.type==='turnier'?cstp('Runden',c.rounds,'rounds'):''}</section>
   <section><b>Hochstapler</b>${cseg([['bekannt','Anzahl bekannt'],['geheim','Geheim']],c.mode,'mode')}${b?cstp('Anzahl',c.k,'k'):cstp('Maximal',c.max,'max')}</section>
-  ${GM==='f'?fSec():catSec(c,true)}
-  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${(c.timer||0)===v?'on':''}" onclick="mx('cfg',{k:'timer',v:${v}})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten</p></section>`
+  </div><div class="wr">${GM==='f'?fSec():catSec(c,true)}
+  <section><b>Timer für die Diskussion</b><div class="row seg">${[0,1,2,3,5].map(v=>`<button class="${(c.timer||0)===v?'on':''}" onclick="mx('cfg',{k:'timer',v:${v}})">${v||'Aus'}</button>`).join('')}</div><p class="mut">Minuten</p></section></div>`
   :`<section><p>${c.type==='turnier'?`Turnier mit ${c.rounds} Runden`:'Blitzrunde'}, ${b?`${c.k} Hochstapler`:`Geheim mit höchstens ${c.max} Hochstaplern`}.</p><p class="mut">${c.timer?`Timer: ${c.timer} Min. `:''}${nm(m.host)} startet das Spiel.</p></section>`+(GM==='f'?'':c.cats?catSec(c,false):''))
   +`<button onclick="rules('mpBack')">Regeln</button><p class="c mut" style="margin-top:18px;font-size:14px">Version ${VERSION} · Server ${m.wv||'veraltet'}</p>`;
  }else if(m.ph==='role'){const r=m.role,k=m.k;
